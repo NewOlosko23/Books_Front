@@ -9,16 +9,17 @@ import {
   Star,
   Share2,
 } from "lucide-react";
+import Hero from "../assets/hero.jpg";
+import New from "../assets/new2.jpg";
 
 const Home = () => {
   return (
-    <div className="font-sans text-gray-800">
+    <div className="text-gray-800">
       {/* Hero */}
       <div
         className="relative min-h-screen bg-center bg-cover flex items-center justify-center text-white"
         style={{
-          backgroundImage:
-            "linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url('/images/bookshelf.jpg')",
+          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url(${Hero})`,
         }}
       >
         <motion.div
@@ -41,7 +42,6 @@ const Home = () => {
           </Link>
         </motion.div>
       </div>
-
       {/* About */}
       <section className="py-16 bg-white px-4 md:px-16">
         <motion.div
@@ -67,7 +67,6 @@ const Home = () => {
           </p>
         </motion.div>
       </section>
-
       {/* How It Works */}
       <section className="py-16 bg-blue-50 px-4 md:px-16">
         <motion.div
@@ -158,193 +157,195 @@ const Home = () => {
           </div>
         </motion.div>
       </section>
-
       {/* Pricing */}
-      {/* Pricing */}
-      <section className="py-20 bg-white px-4 md:px-16">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-4xl font-bold text-center text-blue-700 mb-6">
-            Flexible Plans for Every Reader
-          </h2>
-          <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12 text-lg">
-            Whether you're a casual reader or a bookworm, choose a plan that
-            fits your lifestyle.
-          </p>
+      <div
+        className="bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${New})` }}
+      >
+        {" "}
+        {/* Pricing */}
+        <section className="py-20 bg-white/60 px-4 md:px-16">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl font-bold text-center text-blue-700 mb-6">
+              Flexible Plans for Every Reader
+            </h2>
+            <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12 text-lg">
+              Whether you're a casual reader or a bookworm, choose a plan that
+              fits your lifestyle.
+            </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
-            {[
-              {
-                title: "Basic",
-                price: "KES 100",
-                features: [
-                  "1 book/week",
-                  "Access to common titles",
-                  "Pickup point only",
-                ],
-                color: "from-blue-100 to-white",
-              },
-              {
-                title: "Standard",
-                price: "KES 250",
-                features: [
-                  "3 books/month",
-                  "Mid-tier catalog access",
-                  "Pickup or delivery",
-                ],
-                color: "from-green-100 to-white",
-              },
-              {
-                title: "Premium",
-                price: "KES 500",
-                features: [
-                  "Unlimited books",
-                  "Full catalog access",
-                  "Priority delivery",
-                ],
-                color: "from-purple-100 to-white",
-              },
-            ].map((plan, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.15, duration: 0.5 }}
-                viewport={{ once: true }}
-                className={`bg-gradient-to-br ${plan.color} rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-shadow duration-300`}
-              >
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                  {plan.title}
-                </h3>
-                <p className="text-blue-600 text-3xl font-extrabold mb-4">
-                  {plan.price}
-                </p>
-                <ul className="space-y-3 text-gray-700 mb-6">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <span className="text-green-500">✔</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  to="/signup"
-                  className="inline-block bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition"
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+              {[
+                {
+                  title: "Basic",
+                  price: "KES 100",
+                  features: [
+                    "1 book/week",
+                    "Access to common titles",
+                    "Pickup point only",
+                  ],
+                  color: "from-blue-100 to-white",
+                },
+                {
+                  title: "Standard",
+                  price: "KES 250",
+                  features: [
+                    "3 books/month",
+                    "Mid-tier catalog access",
+                    "Pickup or delivery",
+                  ],
+                  color: "from-green-100 to-white",
+                },
+                {
+                  title: "Premium",
+                  price: "KES 500",
+                  features: [
+                    "Unlimited books",
+                    "Full catalog access",
+                    "Priority delivery",
+                  ],
+                  color: "from-purple-100 to-white",
+                },
+              ].map((plan, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.15, duration: 0.5 }}
+                  viewport={{ once: true }}
+                  className={`bg-gradient-to-br ${plan.color} rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-shadow duration-300`}
                 >
-                  Choose Plan
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                    {plan.title}
+                  </h3>
+                  <p className="text-blue-600 text-3xl font-extrabold mb-4">
+                    {plan.price}
+                  </p>
+                  <ul className="space-y-3 text-gray-700 mb-6">
+                    {plan.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <span className="text-green-500">✔</span>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    to="/signup"
+                    className="inline-block bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition"
+                  >
+                    Choose Plan
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+        {/* Benefits */}
+        <section className="py-20 bg-gradient-to-br from-blue-50 to-blue-100 px-4 md:px-16">
+          <motion.div
+            initial={{ x: -50, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl font-extrabold text-center text-blue-800 mb-6">
+              Why Book Lovers Trust Us
+            </h2>
+            <p className="text-center max-w-3xl mx-auto text-gray-600 text-lg mb-12">
+              We're more than just a platform. We’re a community of readers who
+              believe that books should be within reach — always. Here's what
+              makes us special:
+            </p>
 
-      {/* Benefits */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-blue-100 px-4 md:px-16">
-        <motion.div
-          initial={{ x: -50, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-4xl font-extrabold text-center text-blue-800 mb-6">
-            Why Book Lovers Trust Us
-          </h2>
-          <p className="text-center max-w-3xl mx-auto text-gray-600 text-lg mb-12">
-            We're more than just a platform. We’re a community of readers who
-            believe that books should be within reach — always. Here's what
-            makes us special:
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                title: "Budget-Friendly Access",
-                desc: "Enjoy a wide selection of books without the heavy price tag. Plans start as low as KES 100.",
-                icon: "💸",
-              },
-              {
-                title: "Diverse Book Catalog",
-                desc: "From fiction to academic gems, discover stories that resonate with every interest and age group.",
-                icon: "📚",
-              },
-              {
-                title: "Fast Delivery & Returns",
-                desc: "Receive books at your doorstep or choose a nearby pickup point — at your convenience.",
-                icon: "🚚",
-              },
-              {
-                title: "Eco-Friendly & Sustainable",
-                desc: "We reduce waste by promoting shared reading and responsible recycling of worn-out books.",
-                icon: "🌍",
-              },
-              {
-                title: "Reader-Centric Experience",
-                desc: "Rate, review, and follow fellow book lovers. Reading isn’t just personal — it’s social.",
-                icon: "🤝",
-              },
-              {
-                title: "No Overdue Pressure",
-                desc: "Life happens — we get it. Flexible return policies and optional extensions help you read stress-free.",
-                icon: "🕰️",
-              },
-            ].map((feature, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
-              >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h4 className="text-xl font-semibold text-blue-700 mb-2">
-                  {feature.title}
-                </h4>
-                <p className="text-gray-600">{feature.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Locations */}
-      <section className="py-20 bg-white px-4 md:px-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-4xl font-extrabold text-center text-blue-800 mb-6">
-            Where You Can Find Us
-          </h2>
-          <p className="text-center text-gray-600 max-w-xl mx-auto text-lg mb-10">
-            We’re spreading the joy of reading one county at a time. Our
-            services are currently available in:
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 text-center max-w-4xl mx-auto">
-            {[
-              { city: "Homa Bay", icon: "📍" },
-              { city: "Nairobi", icon: "🏙️" },
-              { city: "Kisumu", icon: "🌅" },
-              { city: "Mombasa", icon: "🌊" },
-            ].map((loc, i) => (
-              <div
-                key={i}
-                className="bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-6 rounded-2xl shadow transition duration-300"
-              >
-                <div className="text-3xl mb-2">{loc.icon}</div>
-                {loc.city}
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {[
+                {
+                  title: "Budget-Friendly Access",
+                  desc: "Enjoy a wide selection of books without the heavy price tag. Plans start as low as KES 100.",
+                  icon: "💸",
+                },
+                {
+                  title: "Diverse Book Catalog",
+                  desc: "From fiction to academic gems, discover stories that resonate with every interest and age group.",
+                  icon: "📚",
+                },
+                {
+                  title: "Fast Delivery & Returns",
+                  desc: "Receive books at your doorstep or choose a nearby pickup point — at your convenience.",
+                  icon: "🚚",
+                },
+                {
+                  title: "Eco-Friendly & Sustainable",
+                  desc: "We reduce waste by promoting shared reading and responsible recycling of worn-out books.",
+                  icon: "🌍",
+                },
+                {
+                  title: "Reader-Centric Experience",
+                  desc: "Rate, review, and follow fellow book lovers. Reading isn’t just personal — it’s social.",
+                  icon: "🤝",
+                },
+                {
+                  title: "No Overdue Pressure",
+                  desc: "Life happens — we get it. Flexible return policies and optional extensions help you read stress-free.",
+                  icon: "🕰️",
+                },
+              ].map((feature, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
+                >
+                  <div className="text-4xl mb-4">{feature.icon}</div>
+                  <h4 className="text-xl font-semibold text-blue-700 mb-2">
+                    {feature.title}
+                  </h4>
+                  <p className="text-gray-600">{feature.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+        {/* Locations */}
+        <section className="py-20 bg-white/60 px-4 md:px-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl font-extrabold text-center text-blue-800 mb-6">
+              Where You Can Find Us
+            </h2>
+            <p className="text-center text-gray-600 max-w-xl mx-auto text-lg mb-10">
+              We’re spreading the joy of reading one county at a time. Our
+              services are currently available in:
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 text-center max-w-4xl mx-auto">
+              {[
+                { city: "Homa Bay", icon: "📍" },
+                { city: "Nairobi", icon: "🏙️" },
+                { city: "Kisumu", icon: "🌅" },
+                { city: "Mombasa", icon: "🌊" },
+              ].map((loc, i) => (
+                <div
+                  key={i}
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-6 rounded-2xl shadow transition duration-300"
+                >
+                  <div className="text-3xl mb-2">{loc.icon}</div>
+                  {loc.city}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+      </div>
       {/* Footer */}
       <footer className="bg-gray-900 text-white px-4 md:px-16 pt-16 pb-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
@@ -438,7 +439,7 @@ const Home = () => {
               <input
                 type="email"
                 placeholder="Your email address"
-                className="w-full sm:w-auto flex-1 px-4 py-2 rounded-l-md text-gray-800"
+                className="w-full sm:w-auto flex-1 px-4 py-2 rounded-l-md text-gray-100"
               />
               <button
                 type="submit"

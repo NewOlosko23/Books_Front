@@ -7,6 +7,8 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
@@ -71,29 +73,37 @@ const Header = () => {
           animate={{ height: "auto" }}
           className="md:hidden bg-white px-4 pb-4 space-y-2 overflow-hidden border-t border-gray-200"
         >
-          <Link to="/" className="block text-gray-700 hover:text-blue-600">
+          <Link
+            to="/"
+            onClick={closeMenu}
+            className="block text-gray-700 hover:text-blue-600"
+          >
             Home
           </Link>
           <Link
             to="/browse"
+            onClick={closeMenu}
             className="block text-gray-700 hover:text-blue-600"
           >
             Browse
           </Link>
           <Link
             to="/how-it-works"
+            onClick={closeMenu}
             className="block text-gray-700 hover:text-blue-600"
           >
             How It Works
           </Link>
           <Link
             to="/contact"
+            onClick={closeMenu}
             className="block text-gray-700 hover:text-blue-600"
           >
             Contact
           </Link>
           <Link
             to="/signup"
+            onClick={closeMenu}
             className="block bg-blue-600 hover:bg-blue-700 text-white text-center px-4 py-2 rounded-xl transition-all shadow-md"
           >
             Get Started

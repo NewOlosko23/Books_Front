@@ -1,14 +1,20 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import LoginImage from "../assets/login.jpg";
 
 const Login = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4">
+    <div
+      className="min-h-screen flex items-center justify-center bg-center bg-cover p-4"
+      style={{
+        backgroundImage: `linear-gradient(to bottom right, rgba(255, 255, 255, 0.8), rgba(240, 240, 255, 0.9)), url(${LoginImage})`,
+      }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md"
+        className="bg-white bg-opacity-90 shadow-2xl backdrop-blur-lg rounded-2xl p-8 w-full max-w-md"
       >
         <h2 className="text-2xl font-bold text-blue-600 text-center mb-6">
           Welcome Back
