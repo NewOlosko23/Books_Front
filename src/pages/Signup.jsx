@@ -1,8 +1,87 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { auth, db } from "../firebase"; // Import Firestore
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore"; // Firestore functions
 import Login from "../assets/login.jpg";
 
 const Signup = () => {
+  const [formData, setFormData] = useState({
+    username: "",
+    firstName: "",
+    lastName: "",
+    idNumber: "",
+    location: "",
+    email: "",
+    password: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      // Create user in Firebase Auth (only email & password)
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+      const user = userCredential.user;
+
+      // Prepare user object (excluding password)
+      const { username, firstName, lastName, idNumber, location, email } =
+        formData;
+
+      const userData = {
+        username,
+        firstName,
+        lastName,
+        idNumber,
+        location,
+        email,
+      };
+
+      // Store additional user details in Firestore
+      await setDoc(doc(db, "users", user.uid), userData);
+
+      // Cache user details in localStorage for persistence
+      localStorage.setItem("userDetails", JSON.stringify(userData));
+
+      alert("Registration successful!");
+      navigate("/dashboard"); // Redirect to dashboard after successful signup
+
+      // Reset form
+      setFormData({
+        username: "",
+        firstName: "",
+        lastName: "",
+        idNumber: "",
+        location: "",
+        email: "",
+        password: "",
+      });
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-center bg-cover p-4"
@@ -20,78 +99,43 @@ const Signup = () => {
           Create an Account
         </h2>
 
-        <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. booklover23"
-              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
-              required
-            />
-          </div>
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              First Name
-            </label>
-            <input
-              type="text"
-              placeholder="John"
-              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Last Name
-            </label>
-            <input
-              type="text"
-              placeholder="Doe"
-              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              ID Number
-            </label>
-            <input
-              type="text"
-              placeholder="12345678"
-              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Location
-            </label>
-            <input
-              type="text"
-              placeholder="Homa Bay, Kenya"
-              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
-              required
-            />
-          </div>
+        <form
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          onSubmit={handleSubmit}
+        >
+          {[
+            "username",
+            "firstName",
+            "lastName",
+            "idNumber",
+            "location",
+            "email",
+          ].map((field, i) => (
+            <div key={i}>
+              <label className="block text-sm font-medium text-gray-700">
+                {field === "idNumber"
+                  ? "ID Number"
+                  : field.charAt(0).toUpperCase() + field.slice(1)}
+              </label>
+              <input
+                type={field === "email" ? "email" : "text"}
+                name={field}
+                value={formData[field]}
+                onChange={handleChange}
+                placeholder={
+                  field === "username"
+                    ? "e.g. booklover23"
+                    : field === "location"
+                    ? "Homa Bay, Kenya"
+                    : ""
+                }
+                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
+                required
+              />
+            </div>
+          ))}
 
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700">
@@ -99,6 +143,9 @@ const Signup = () => {
             </label>
             <input
               type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               placeholder="••••••••"
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
               required
@@ -109,9 +156,10 @@ const Signup = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
             type="submit"
+            disabled={loading}
             className="md:col-span-2 w-full bg-blue-600 text-white py-2 rounded-xl mt-4 hover:bg-blue-700 transition shadow-md"
           >
-            Sign Up
+            {loading ? "Signing Up..." : "Sign Up"}
           </motion.button>
         </form>
 

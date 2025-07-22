@@ -1,19 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../firebase"; // Firebase Auth
+import { signOut } from "firebase/auth";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
+  const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
+
+  // Logout function
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      localStorage.clear(); // Clear cached user data
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  // Listen to Firebase auth state
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        {/* Logo with subtle animation */}
-        <Link to="/">
+        {/* Logo */}
+        <Link to={isLoggedIn ? "/dashboard" : "/"}>
           <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -26,9 +49,15 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-6 items-center">
-          <Link to="/" className="text-gray-700 hover:text-blue-600 transition">
-            Home
-          </Link>
+          {isLoggedIn && (
+            <Link
+              to="/dashboard"
+              className="text-gray-700 hover:text-blue-600 transition"
+            >
+              Dashboard
+            </Link>
+          )}
+
           <Link
             to="/browse"
             className="text-gray-700 hover:text-blue-600 transition"
@@ -36,7 +65,7 @@ const Header = () => {
             Browse
           </Link>
           <Link
-            to="how-it-works"
+            to="/how-it-works"
             className="text-gray-700 hover:text-blue-600 transition"
           >
             How It Works
@@ -48,16 +77,25 @@ const Header = () => {
             Contact
           </Link>
 
-          {/* CTA Button */}
-          <Link
-            to="/signup"
-            className="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-all shadow-md"
-          >
-            Get Started
-          </Link>
+          {/* CTA Button: Logout or Get Started */}
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="ml-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl transition-all shadow-md"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              to="/signup"
+              className="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-all shadow-md"
+            >
+              Get Started
+            </Link>
+          )}
         </nav>
 
-        {/* Hamburger for Mobile */}
+        {/* Mobile Menu Button */}
         <button
           onClick={toggleMenu}
           className="md:hidden text-gray-700 hover:text-blue-600"
@@ -73,13 +111,15 @@ const Header = () => {
           animate={{ height: "auto" }}
           className="md:hidden bg-white px-4 pb-4 space-y-2 overflow-hidden border-t border-gray-200"
         >
-          <Link
-            to="/"
-            onClick={closeMenu}
-            className="block text-gray-700 hover:text-blue-600"
-          >
-            Home
-          </Link>
+          {isLoggedIn && (
+            <Link
+              to="/dashboard"
+              onClick={closeMenu}
+              className="block text-gray-700 hover:text-blue-600"
+            >
+              Dashboard
+            </Link>
+          )}
           <Link
             to="/browse"
             onClick={closeMenu}
@@ -101,13 +141,25 @@ const Header = () => {
           >
             Contact
           </Link>
-          <Link
-            to="/signup"
-            onClick={closeMenu}
-            className="block bg-blue-600 hover:bg-blue-700 text-white text-center px-4 py-2 rounded-xl transition-all shadow-md"
-          >
-            Get Started
-          </Link>
+          {isLoggedIn ? (
+            <button
+              onClick={() => {
+                handleLogout();
+                closeMenu();
+              }}
+              className="block w-full bg-red-600 hover:bg-red-700 text-white text-center px-4 py-2 rounded-xl transition-all shadow-md"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              to="/signup"
+              onClick={closeMenu}
+              className="block bg-blue-600 hover:bg-blue-700 text-white text-center px-4 py-2 rounded-xl transition-all shadow-md"
+            >
+              Get Started
+            </Link>
+          )}
         </motion.div>
       )}
     </header>
