@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/404";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import ListBook from "./pages/Dashboard/ListBook";
+import HireBook from "./pages/Dashboard/HireBook";
 
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -73,6 +74,15 @@ function App() {
           element={
             <ProtectedRoute>
               <ListBook />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/hire-book/:slug"
+          element={
+            <ProtectedRoute>
+              <HireBook />
             </ProtectedRoute>
           }
         />

@@ -7,13 +7,8 @@ const BookDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  const book = allBooks.find(
-    (b) =>
-      b.title
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]/g, "") === slug
-  );
+  // Match directly using the slug field in your dataset
+  const book = allBooks.find((b) => b.slug === slug);
 
   if (!book) {
     return (
@@ -56,12 +51,18 @@ const BookDetail = () => {
           className="w-full md:w-1/3 h-80 object-cover rounded-xl"
         />
 
-        <div className="flex-1">
+        <div className="flex-1 space-x-2">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
             {book.title}
           </h1>
           <p className="text-lg text-gray-600 mb-2">By {book.author}</p>
           <p className="text-sm text-gray-500 mb-4">Shared by: {book.from}</p>
+          <p className="text-sm text-gray-500 mb-4">
+            Location: {book.location}
+          </p>
+          <p className="text-sm text-gray-500 mb-4">
+            Posted on: {book.datePosted}
+          </p>
           <p className="text-sm bg-blue-100 text-blue-700 inline-block px-3 py-1 rounded-full mb-2">
             Category: {book.category}
           </p>
@@ -77,6 +78,7 @@ const BookDetail = () => {
 
           <button
             disabled={!book.availability}
+            onClick={() => navigate(`/hire-book/${book.slug}`)}
             className={`px-6 py-2 rounded-xl text-white font-semibold transition-all duration-300 ${
               book.availability
                 ? "bg-blue-600 hover:bg-blue-700"

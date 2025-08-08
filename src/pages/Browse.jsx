@@ -28,6 +28,11 @@ const Browse = () => {
     page * booksPerPage
   );
 
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="px-4 py-16 bg-gradient-to-br from-gray-50 to-white min-h-screen">
       <motion.h1
@@ -117,7 +122,7 @@ const Browse = () => {
         {[...Array(pageCount)].map((_, i) => (
           <button
             key={i}
-            onClick={() => setPage(i + 1)}
+            onClick={() => handlePageChange(i + 1)}
             className={`px-4 py-2 rounded-xl text-sm ${
               page === i + 1
                 ? "bg-blue-600 text-white"

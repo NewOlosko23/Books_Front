@@ -148,12 +148,14 @@ const Home = () => {
           </div>
 
           <div className="mt-16 text-center">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              className="bg-blue-600 text-white px-8 py-3 text-lg rounded-full shadow-lg hover:bg-blue-700 transition"
-            >
-              Join Now & Start Lending
-            </motion.button>
+            <Link to="/signup" className="inline-block mb-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                className="bg-blue-600 cursor-pointer text-white px-8 py-3 text-lg rounded-full shadow-lg hover:bg-blue-700 transition"
+              >
+                Join Now & Start Lending
+              </motion.button>
+            </Link>
           </div>
         </motion.div>
       </section>
