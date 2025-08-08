@@ -33,7 +33,7 @@ const ContactUs = () => {
             </div>
             <div>
               <h4 className="font-semibold text-gray-800">Email</h4>
-              <p className="text-gray-600">support@bookhub.co.ke</p>
+              <p className="text-gray-600">support@booksarc.co.ke</p>
             </div>
           </div>
 
@@ -54,7 +54,7 @@ const ContactUs = () => {
             <div>
               <h4 className="font-semibold text-gray-800">Location</h4>
               <p className="text-gray-600">
-                Nairobi, Kenya <br />
+                Kisumu, Kenya <br />
                 Open: Mon – Sat (9AM – 5PM)
               </p>
             </div>

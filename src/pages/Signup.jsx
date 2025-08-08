@@ -128,7 +128,7 @@ const Signup = () => {
                   field === "username"
                     ? "e.g. booklover23"
                     : field === "location"
-                    ? "Homa Bay, Kenya"
+                    ? "Milimani, Kisumu"
                     : ""
                 }
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"

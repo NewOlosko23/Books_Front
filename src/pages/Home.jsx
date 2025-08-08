@@ -14,7 +14,7 @@ import New from "../assets/new2.jpg";
 
 const Home = () => {
   return (
-    <div className="text-gray-800">
+    <div className="text-gray-800 w-full overflow-x-hidden">
       {/* Hero */}
       <div
         className="relative min-h-screen bg-center bg-cover flex items-center justify-center text-white"
@@ -323,25 +323,61 @@ const Home = () => {
             <h2 className="text-4xl font-extrabold text-center text-blue-800 mb-6">
               Where You Can Find Us
             </h2>
-            <p className="text-center text-gray-600 max-w-xl mx-auto text-lg mb-10">
-              We’re spreading the joy of reading one county at a time. Our
-              services are currently available in:
+            <p className="text-center text-gray-600 max-w-2xl mx-auto text-lg mb-10">
+              We’re making it easier than ever to access books in your
+              neighborhood. Starting with Kisumu — and expanding fast!
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 text-center max-w-4xl mx-auto">
-              {[
-                { city: "Homa Bay", icon: "📍" },
-                { city: "Nairobi", icon: "🏙️" },
-                { city: "Kisumu", icon: "🌅" },
-                { city: "Mombasa", icon: "🌊" },
-              ].map((loc, i) => (
-                <div
-                  key={i}
-                  className="bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-6 rounded-2xl shadow transition duration-300"
-                >
-                  <div className="text-3xl mb-2">{loc.icon}</div>
-                  {loc.city}
-                </div>
-              ))}
+
+            {/* Kisumu Highlight */}
+            <div className="bg-blue-100/80 rounded-2xl p-6 mb-10 shadow-lg max-w-4xl mx-auto">
+              <h3 className="text-2xl font-bold text-blue-900 text-center mb-4">
+                📍 Kisumu
+              </h3>
+              <p className="text-center text-gray-700 mb-6">
+                You can conveniently hire or lease books from these areas:
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
+                {[
+                  "Milimani",
+                  "Tom Mboya Estate",
+                  "MIG Estate",
+                  "Riat Hills",
+                  "Mountain View",
+                  "Mamboleo",
+                  "Kibos",
+                  "Ojola",
+                  "Manyatta",
+                  "Nyalenda",
+                  "Obunga",
+                  "Kanyakwar",
+                ].map((area, i) => (
+                  <div
+                    key={i}
+                    className="bg-white hover:bg-blue-200 cursor-pointer text-blue-800 font-medium py-3 rounded-xl shadow transition duration-300"
+                  >
+                    {area}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Coming Soon */}
+            <div className="text-center max-w-2xl mx-auto">
+              <p className="text-gray-700 text-lg mb-6">
+                🌍 More towns and locations coming soon:
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                {["Nairobi", "Mombasa", "Homa Bay", "Eldoret", "Nakuru"].map(
+                  (city, i) => (
+                    <div
+                      key={i}
+                      className="bg-blue-50 hover:bg-blue-200 text-blue-700 font-medium py-2 px-4 rounded-full shadow transition duration-300"
+                    >
+                      {city}
+                    </div>
+                  )
+                )}
+              </div>
             </div>
           </motion.div>
         </section>

@@ -8,6 +8,7 @@ import {
   Star,
   Share2,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const steps = [
   {
@@ -93,12 +94,14 @@ const HowItWorks = () => {
       </div>
 
       <div className="mt-20 text-center">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          className="bg-blue-600 text-white px-8 py-3 text-lg rounded-full shadow-lg hover:bg-blue-700 transition"
-        >
-          Join Now & Start Lending
-        </motion.button>
+        <Link to="/signup" className="inline-block mb-4">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            className="bg-blue-600 text-white px-8 py-3 text-lg rounded-full shadow-lg hover:bg-blue-700 transition"
+          >
+            Join Now & Start Lending
+          </motion.button>
+        </Link>
       </div>
     </div>
   );

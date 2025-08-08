@@ -43,7 +43,7 @@ const Header = () => {
             transition={{ duration: 0.5 }}
             className="text-2xl font-extrabold text-blue-600 tracking-wide"
           >
-            📚 Book Club
+            📚 BooksArc
           </motion.h1>
         </Link>
 
