@@ -1,16 +1,27 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 import LoginImage from "../assets/login.jpg";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { login } = useAuth(); // Get login function from context
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -18,10 +29,30 @@ const Login = () => {
     setError("");
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/dashboard"); 
+      const response = await axios.post(
+        "https://books-server-5p0q.onrender.com/api/auth/login",
+        formData,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      const data = response.data;
+
+      // Call context login to update state and localStorage
+      login({
+        username: data.username,
+        email: data.email,
+        _id: data._id,
+        token: data.token, // Optional, if you want to keep token
+      });
+
+      // Navigate to dashboard after successful login
+      navigate("/dashboard");
     } catch (err) {
-      setError("Invalid email or password. Please try again.");
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Invalid email or password. Please try again.");
+      }
       console.error(err);
     } finally {
       setLoading(false);
@@ -56,8 +87,9 @@ const Login = () => {
             </label>
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
               placeholder="you@example.com"
               required
@@ -70,8 +102,9 @@ const Login = () => {
             </label>
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
               placeholder="••••••••"
               required

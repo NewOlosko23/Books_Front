@@ -1,20 +1,17 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase"; // Import Firestore
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore"; // Firestore functions
+import axios from "axios";
 import Login from "../assets/login.jpg";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
     username: "",
-    firstName: "",
-    lastName: "",
-    idNumber: "",
-    location: "",
     email: "",
     password: "",
+    phone: "",
+    idNumber: "",
+    location: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -22,10 +19,10 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -34,59 +31,67 @@ const Signup = () => {
     setError("");
 
     try {
-      // Create user in Firebase Auth (only email & password)
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        formData.email,
-        formData.password
+      const response = await axios.post(
+        "https://books-server-5p0q.onrender.com/api/auth/register",
+        formData,
+        { headers: { "Content-Type": "application/json" } }
       );
-      const user = userCredential.user;
 
-      // Prepare user object (excluding password)
-      const { username, firstName, lastName, idNumber, location, email } =
-        formData;
+      const data = response.data;
 
-      const userData = {
-        username,
-        firstName,
-        lastName,
-        idNumber,
-        location,
-        email,
-      };
-
-      // Store additional user details in Firestore
-      await setDoc(doc(db, "users", user.uid), userData);
-
-      // Cache user details in localStorage for persistence
-      localStorage.setItem("userDetails", JSON.stringify(userData));
+      // Save token and user details in localStorage
+      localStorage.setItem("userToken", data.token);
+      localStorage.setItem(
+        "userDetails",
+        JSON.stringify({
+          username: data.username,
+          email: data.email,
+          _id: data._id,
+        })
+      );
 
       alert("Registration successful!");
-      navigate("/dashboard"); // Redirect to dashboard after successful signup
+      navigate("/dashboard");
 
-      // Reset form
       setFormData({
         username: "",
-        firstName: "",
-        lastName: "",
-        idNumber: "",
-        location: "",
         email: "",
         password: "",
+        phone: "",
+        idNumber: "",
+        location: "",
       });
     } catch (err) {
-      console.error(err);
-      setError(err.message);
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  const locations = [
+    "Milimani",
+    "Tom Mboya Estate",
+    "MIG Estate",
+    "Riat Hills",
+    "Mountain View",
+    "Mamboleo",
+    "Kibos",
+    "Ojola",
+    "Manyatta",
+    "Nyalenda",
+    "Obunga",
+    "Kanyakwar",
+  ];
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-center bg-cover p-4"
       style={{
-        backgroundImage: `linear-gradient(to bottom right, rgba(255, 255, 255, 0.85), rgba(240, 240, 255, 0.9)), url(${Login})`,
+        backgroundImage: `linear-gradient(to bottom right, rgba(255,255,255,0.85), rgba(240,240,255,0.9)), url(${Login})`,
       }}
     >
       <motion.div
@@ -99,57 +104,78 @@ const Signup = () => {
           Create an Account
         </h2>
 
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm text-center mb-4">{error}</p>
+        )}
 
         <form
           className="grid grid-cols-1 md:grid-cols-2 gap-4"
           onSubmit={handleSubmit}
         >
           {[
-            "username",
-            "firstName",
-            "lastName",
-            "idNumber",
-            "location",
-            "email",
-          ].map((field, i) => (
-            <div key={i}>
+            {
+              name: "username",
+              label: "Username",
+              type: "text",
+              placeholder: "e.g. booklover23",
+            },
+            { name: "email", label: "Email", type: "email", placeholder: "" },
+            {
+              name: "password",
+              label: "Password",
+              type: "password",
+              placeholder: "••••••••",
+            },
+            {
+              name: "phone",
+              label: "Phone",
+              type: "tel",
+              placeholder: "+254712345678",
+            },
+            {
+              name: "idNumber",
+              label: "ID Number",
+              type: "text",
+              placeholder: "",
+            },
+          ].map(({ name, label, type, placeholder }) => (
+            <div key={name}>
               <label className="block text-sm font-medium text-gray-700">
-                {field === "idNumber"
-                  ? "ID Number"
-                  : field.charAt(0).toUpperCase() + field.slice(1)}
+                {label}
               </label>
               <input
-                type={field === "email" ? "email" : "text"}
-                name={field}
-                value={formData[field]}
+                type={type}
+                name={name}
+                value={formData[name]}
                 onChange={handleChange}
-                placeholder={
-                  field === "username"
-                    ? "e.g. booklover23"
-                    : field === "location"
-                    ? "Milimani, Kisumu"
-                    : ""
-                }
+                placeholder={placeholder}
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
                 required
               />
             </div>
           ))}
 
-          <div className="md:col-span-2">
+          {/* Location select dropdown */}
+          <div>
             <label className="block text-sm font-medium text-gray-700">
-              Password
+              Location
             </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
+            <select
+              name="location"
+              value={formData.location}
               onChange={handleChange}
-              placeholder="••••••••"
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
               required
-            />
+            >
+              <option value="" disabled>
+                Select Location
+              </option>
+              {locations.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </select>
           </div>
 
           <motion.button

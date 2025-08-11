@@ -1,42 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { auth } from "../firebase"; // Firebase Auth
-import { signOut } from "firebase/auth";
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
 
-  // Logout function
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      localStorage.clear(); // Clear cached user data
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+  const handleLogout = () => {
+    logout(); // clear user state in context
+    navigate("/login"); // redirect to login page
+    closeMenu(); // close mobile menu if open
   };
-
-  // Listen to Firebase auth state
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setIsLoggedIn(!!user);
-    });
-    return () => unsubscribe();
-  }, []);
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Logo */}
-        <Link to={isLoggedIn ? "/dashboard" : "/"}>
+        <Link to={user ? "/dashboard" : "/"}>
           <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -49,7 +35,7 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-6 items-center">
-          {isLoggedIn && (
+          {user && (
             <Link
               to="/dashboard"
               className="text-gray-700 hover:text-blue-600 transition"
@@ -77,8 +63,7 @@ const Header = () => {
             Contact
           </Link>
 
-          {/* CTA Button: Logout or Get Started */}
-          {isLoggedIn ? (
+          {user ? (
             <button
               onClick={handleLogout}
               className="ml-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl transition-all shadow-md"
@@ -111,7 +96,7 @@ const Header = () => {
           animate={{ height: "auto" }}
           className="md:hidden bg-white px-4 pb-4 space-y-2 overflow-hidden border-t border-gray-200"
         >
-          {isLoggedIn && (
+          {user && (
             <Link
               to="/dashboard"
               onClick={closeMenu}
@@ -141,11 +126,10 @@ const Header = () => {
           >
             Contact
           </Link>
-          {isLoggedIn ? (
+          {user ? (
             <button
               onClick={() => {
                 handleLogout();
-                closeMenu();
               }}
               className="block w-full bg-red-600 hover:bg-red-700 text-white text-center px-4 py-2 rounded-xl transition-all shadow-md"
             >

@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import allBooks from "../../data/books";
-import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 
 const HireBook = () => {
-  const { slug } = useParams();
+  const { bookId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
 
-  const book = allBooks.find((b) => b.slug === slug);
-
+  const [book, setBook] = useState(null);
+  const [loadingBook, setLoadingBook] = useState(true);
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -18,40 +16,92 @@ const HireBook = () => {
     pickupDate: "",
     notes: "",
   });
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userDetails")) || null;
+    if (!user) {
+      alert("You must be logged in to hire a book.");
+      navigate("/login");
+      return;
+    }
+    if (!user.subscription || user.subscription.status !== "active") {
+      navigate("/subscription");
+      return;
+    }
+
     setForm((prev) => ({
       ...prev,
-      fullName: user?.displayName || "",
-      email: user?.email || "",
-      phone: user?.phoneNumber || "",
+      fullName: user.username || "",
+      email: user.email || "",
+      phone: user.phone || "",
       pickupDate: new Date().toISOString().split("T")[0],
     }));
-  }, [user]);
+  }, [navigate]);
 
-  if (!book) {
-    return (
-      <div className="px-4 py-16 text-center min-h-screen">
-        <h2 className="text-2xl text-red-600 font-semibold">Book not found.</h2>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        const res = await axios.get(
+          `https://books-server-5p0q.onrender.com/api/books/${bookId}`
+        );
+        setBook(res.data);
+        setLoadingBook(false);
+      } catch (err) {
+        setError("Failed to load book details");
+        setLoadingBook(false);
+      }
+    };
+
+    fetchBook();
+  }, [bookId]);
+
+  if (loadingBook) return <p>Loading book info...</p>;
+
+  if (!book) return <p>Book not found.</p>;
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(
-      `Your request to hire "${book.title}" has been submitted. Please wait for approval.`
-    );
-    navigate(`/book/${slug}`);
+    setError("");
+    setSubmitting(true);
+
+    try {
+      const token = localStorage.getItem("userToken");
+      if (!token) {
+        setError("You must be logged in to hire a book.");
+        setSubmitting(false);
+        return;
+      }
+
+      const res = await axios.post(
+        `https://books-server-5p0q.onrender.com/api/hire/${bookId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert(`Your request to hire "${book.title}" has been submitted.`);
+      navigate(`/book/${bookId}`);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          "Failed to submit hire request. Try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <div className="px-4 py-16 bg-gradient-to-br from-white to-blue-50 min-h-screen">
-      {/* Breadcrumb */}
       <div className="max-w-3xl mx-auto mb-6">
         <p className="text-sm text-gray-600">
           <span className="text-blue-600">Browse</span> /{" "}
@@ -61,7 +111,6 @@ const HireBook = () => {
         </p>
       </div>
 
-      {/* Hire Form */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -74,6 +123,8 @@ const HireBook = () => {
         <p className="text-gray-600 mb-6">
           Please fill in the details below to request this book.
         </p>
+
+        {error && <p className="text-red-500 mb-4">{error}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -125,9 +176,10 @@ const HireBook = () => {
 
           <button
             type="submit"
+            disabled={submitting}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold"
           >
-            Submit Request
+            {submitting ? "Submitting..." : "Submit Request"}
           </button>
         </form>
       </motion.div>

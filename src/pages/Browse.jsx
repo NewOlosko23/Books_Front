@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom"; // import Link
+import { Link } from "react-router-dom";
 import books from "../data/books";
 
 const categories = [

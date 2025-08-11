@@ -1,83 +1,139 @@
 import { useState } from "react";
-import { storage, db } from "../../firebase";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
+
+const locations = [
+  "Milimani",
+  "Tom Mboya Estate",
+  "MIG Estate",
+  "Riat Hills",
+  "Mountain View",
+  "Mamboleo",
+  "Kibos",
+  "Ojola",
+  "Manyatta",
+  "Nyalenda",
+  "Obunga",
+  "Kanyakwar",
+];
 
 const ListBook = () => {
-  const { user } = useAuth();
   const [book, setBook] = useState({
     title: "",
     author: "",
     description: "",
-    price: "",
+    location: "",
   });
-  const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
-  const [progress, setProgress] = useState(0);
+  const [base64Image, setBase64Image] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [progress, setProgress] = useState(0);
 
   const handleChange = (e) => {
     setBook({ ...book, [e.target.name]: e.target.value });
   };
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    setFilePreview(selectedFile ? URL.createObjectURL(selectedFile) : null);
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setFilePreview(URL.createObjectURL(file));
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const img = new Image();
+      img.src = reader.result;
+
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxWidth = 500;
+        const maxHeight = 500;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = (width * maxHeight) / height;
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const resizedBase64 = canvas.toDataURL(file.type, 0.9);
+        setBase64Image(resizedBase64);
+      };
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file) {
+
+    if (!base64Image) {
       setError("Please select a cover image.");
+      return;
+    }
+
+    if (!book.location) {
+      setError("Please select a location.");
       return;
     }
 
     try {
       setLoading(true);
       setError("");
+      setProgress(0);
 
-      const storageRef = ref(storage, `books/${Date.now()}_${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      const token = localStorage.getItem("userToken");
+      if (!token) {
+        setError("You must be logged in to list a book.");
+        setLoading(false);
+        return;
+      }
 
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progressPercent = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setProgress(progressPercent);
-        },
-        (err) => {
-          console.error(err);
-          setError("Upload failed. Please try again.");
-          setLoading(false);
-        },
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          await addDoc(collection(db, "books"), {
-            ...book,
-            price: parseFloat(book.price) || 0,
-            coverUrl: downloadURL,
-            userId: user.uid,
-            status: "available",
-            dueDate: null,
-            createdAt: serverTimestamp(),
-          });
+      const payload = {
+        title: book.title,
+        author: book.author,
+        description: book.description,
+        location: book.location,
+        coverImage: base64Image,
+      };
 
-          alert("Book listed successfully!");
-          setBook({ title: "", author: "", description: "", price: "" });
-          setFile(null);
-          setFilePreview(null);
-          setProgress(0);
-          setLoading(false);
+      setProgress(50);
+
+      const response = await axios.post(
+        "https://books-server-5p0q.onrender.com/api/books",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
+
+      setProgress(100);
+
+      alert("Book listed successfully!");
+      setBook({ title: "", author: "", description: "", location: "" });
+      setFilePreview(null);
+      setBase64Image("");
+      setProgress(0);
     } catch (err) {
       console.error(err);
-      setError("Something went wrong. Please try again.");
+      setError(
+        err.response?.data?.message || "Something went wrong. Please try again."
+      );
+    } finally {
       setLoading(false);
     }
   };
@@ -91,7 +147,6 @@ const ListBook = () => {
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Title */}
         <div>
           <label className="block text-sm font-semibold mb-1">Book Title</label>
           <input
@@ -104,7 +159,6 @@ const ListBook = () => {
           />
         </div>
 
-        {/* Author */}
         <div>
           <label className="block text-sm font-semibold mb-1">Author</label>
           <input
@@ -117,7 +171,6 @@ const ListBook = () => {
           />
         </div>
 
-        {/* Description */}
         <div>
           <label className="block text-sm font-semibold mb-1">
             Book Description
@@ -131,22 +184,26 @@ const ListBook = () => {
           />
         </div>
 
-        {/* Price */}
         <div>
-          <label className="block text-sm font-semibold mb-1">
-            Price (KES)
-          </label>
-          <input
-            type="number"
-            name="price"
-            value={book.price}
+          <label className="block text-sm font-semibold mb-1">Location</label>
+          <select
+            name="location"
+            value={book.location}
             onChange={handleChange}
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             required
-          />
+          >
+            <option value="" disabled>
+              Select location
+            </option>
+            {locations.map((loc) => (
+              <option key={loc} value={loc}>
+                {loc}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* File Upload */}
         <div>
           <label className="block text-sm font-semibold mb-1">
             Cover Image
@@ -167,14 +224,12 @@ const ListBook = () => {
           )}
         </div>
 
-        {/* Progress */}
         {progress > 0 && (
           <p className="text-sm text-blue-600 font-semibold text-center">
             Uploading: {progress}%
           </p>
         )}
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}

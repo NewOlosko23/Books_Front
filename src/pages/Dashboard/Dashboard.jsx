@@ -2,15 +2,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { BookOpen, CheckCircle, Clock, PlusCircle } from "lucide-react";
-import { db } from "../../firebase";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import axios from "axios";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -19,39 +11,73 @@ const Dashboard = () => {
   const [subscriptionStatus, setSubscriptionStatus] =
     useState("Pending Payment");
   const [myBooks, setMyBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch user details from Firestore if not in localStorage
+  // Fetch user details from localStorage or backend
   useEffect(() => {
     const fetchUserDetails = async () => {
       const cachedDetails = localStorage.getItem("userDetails");
       if (cachedDetails) {
-        setUserDetails(JSON.parse(cachedDetails));
+        const details = JSON.parse(cachedDetails);
+        setUserDetails(details);
+        setSubscriptionStatus(
+          details.subscription?.status || "Pending Payment"
+        );
+        setLoading(false);
       } else if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          setUserDetails(userSnap.data());
-          localStorage.setItem("userDetails", JSON.stringify(userSnap.data()));
+        try {
+          // Replace URL with your backend endpoint to fetch user details
+          const res = await axios.get(`/api/users/${user.id || user._id}`);
+          const details = res.data;
+          setUserDetails(details);
+          setSubscriptionStatus(
+            details.subscription?.status || "Pending Payment"
+          );
+          localStorage.setItem("userDetails", JSON.stringify(details));
+        } catch (error) {
+          console.error("Failed to fetch user details", error);
+        } finally {
+          setLoading(false);
         }
+      } else {
+        setLoading(false);
       }
     };
+
     fetchUserDetails();
   }, [user]);
 
-  // Fetch user's books from Firestore
+  // Fetch user's books from backend or localStorage
   useEffect(() => {
-    if (!user) return;
     const fetchBooks = async () => {
-      const q = query(collection(db, "books"), where("userId", "==", user.uid));
-      const querySnapshot = await getDocs(q);
-      const books = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setMyBooks(books);
+      if (!user) return;
+
+      const cachedBooks = localStorage.getItem("myBooks");
+      if (cachedBooks) {
+        try {
+          const parsedBooks = JSON.parse(cachedBooks);
+          setMyBooks(Array.isArray(parsedBooks) ? parsedBooks : []);
+        } catch {
+          setMyBooks([]);
+        }
+      } else {
+        try {
+          // Replace URL with your backend endpoint to fetch user's books
+          const res = await axios.get(
+            `/api/books?ownerId=${user.id || user._id}`
+          );
+          setMyBooks(Array.isArray(res.data) ? res.data : []);
+          localStorage.setItem("myBooks", JSON.stringify(res.data));
+        } catch (error) {
+          console.error("Failed to fetch books", error);
+        }
+      }
     };
+
     fetchBooks();
   }, [user]);
+
+  if (loading) return <p>Loading dashboard...</p>;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -78,6 +104,7 @@ const Dashboard = () => {
               <Clock className="text-yellow-500" size={32} />
             )}
           </div>
+
           <div className="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold">Books Listed</h2>
@@ -85,11 +112,15 @@ const Dashboard = () => {
             </div>
             <BookOpen className="text-blue-500" size={32} />
           </div>
+
           <div className="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold">Books Borrowed</h2>
               <p className="text-gray-500 text-sm">
-                {myBooks.filter((b) => b.status === "hired").length} active
+                {Array.isArray(myBooks)
+                  ? myBooks.filter((b) => b.status === "hired").length
+                  : 0}{" "}
+                active
               </p>
             </div>
             <BookOpen className="text-purple-500" size={32} />
@@ -147,16 +178,10 @@ const Dashboard = () => {
                     </span>
                     {book.status === "hired" && book.dueDate && (
                       <p className="text-xs text-gray-500">
-                        Due:{" "}
-                        {new Date(
-                          book.dueDate.seconds * 1000
-                        ).toLocaleDateString()}
+                        Due: {new Date(book.dueDate).toLocaleDateString()}
                       </p>
                     )}
                   </div>
-                  <p className="mt-1 font-semibold text-blue-600">
-                    KES {book.price || 0}
-                  </p>
                 </div>
               ))}
             </div>

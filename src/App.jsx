@@ -14,6 +14,7 @@ import NotFound from "./pages/404";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import ListBook from "./pages/Dashboard/ListBook";
 import HireBook from "./pages/Dashboard/HireBook";
+import Subscription from "./pages/Dashboard/Subscription";
 
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -83,6 +84,14 @@ function App() {
           element={
             <ProtectedRoute>
               <HireBook />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/subscription"
+          element={
+            <ProtectedRoute>
+              <Subscription />
             </ProtectedRoute>
           }
         />
