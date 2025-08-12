@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import LoginImage from "../assets/login.jpg";
 
 const Login = () => {
-  const { login } = useAuth(); // Get login function from context
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -37,15 +37,7 @@ const Login = () => {
 
       const data = response.data;
 
-      // Call context login to update state and localStorage
-      login({
-        username: data.username,
-        email: data.email,
-        _id: data._id,
-        token: data.token, // Optional, if you want to keep token
-      });
-
-      // Navigate to dashboard after successful login
+      login({ data: data.user, token: data.token });
       navigate("/dashboard");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {

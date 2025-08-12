@@ -28,6 +28,7 @@ const ListBook = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [progress, setProgress] = useState(0);
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     setBook({ ...book, [e.target.name]: e.target.value });
@@ -93,7 +94,10 @@ const ListBook = () => {
       setError("");
       setProgress(0);
 
-      const token = localStorage.getItem("userToken");
+      const user = localStorage.getItem("user");
+
+      const token = user ? JSON.parse(user).token : null;
+      setProgress(25);
       if (!token) {
         setError("You must be logged in to list a book.");
         setLoading(false);
@@ -123,7 +127,7 @@ const ListBook = () => {
 
       setProgress(100);
 
-      alert("Book listed successfully!");
+      setMessage("Book listed successfully!");
       setBook({ title: "", author: "", description: "", location: "" });
       setFilePreview(null);
       setBase64Image("");
@@ -229,6 +233,12 @@ const ListBook = () => {
             Uploading: {progress}%
           </p>
         )}
+
+        <div>
+          {message && (
+            <p className="text-green-600 text-center mb-4">{message}</p>
+          )}
+        </div>
 
         <button
           type="submit"

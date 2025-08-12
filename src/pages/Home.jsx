@@ -12,9 +12,14 @@ import {
 import Hero from "../assets/hero.jpg";
 import New from "../assets/new2.jpg";
 
+import LoadServer from "../components/LoadServer";
+
 const Home = () => {
   return (
     <div className="text-gray-800 w-full overflow-x-hidden">
+      <div className="-mt-16">
+        <LoadServer />
+      </div>
       {/* Hero */}
       <div
         className="relative min-h-screen bg-center bg-cover flex items-center justify-center text-white"
