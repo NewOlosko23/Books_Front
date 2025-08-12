@@ -10,19 +10,19 @@ const Subscription = () => {
     {
       id: "basic",
       name: "Basic Plan",
-      price: 500,
-      description: "Access up to 5 books per month",
+      price: 300,
+      description: "Access up to 1 book per week",
     },
     {
       id: "standard",
       name: "Standard Plan",
-      price: 1000,
-      description: "Unlimited book borrowing",
+      price: 500,
+      description: "8 books per month",
     },
     {
       id: "premium",
       name: "Premium Plan",
-      price: 1500,
+      price: 700,
       description: "Unlimited books + priority support",
     },
   ];

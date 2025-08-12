@@ -56,10 +56,10 @@ const Home = () => {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl font-bold text-center mb-6">
-            About Book Club
+            About BooksArc
           </h2>
           <p className="max-w-4xl mx-auto text-center text-gray-700 text-lg leading-relaxed">
-            <strong>Book Club</strong> is a peer-to-peer book lending platform
+            <strong>BooksArc</strong> is a peer-to-peer book lending platform
             that redefines how people access books. Whether you're looking to
             borrow a bestseller or rent out your personal collection, our
             community-driven system connects readers across Kenya.
@@ -190,7 +190,7 @@ const Home = () => {
               {[
                 {
                   title: "Basic",
-                  price: "KES 100",
+                  price: "KES 300",
                   features: [
                     "1 book/week",
                     "Access to common titles",
@@ -200,9 +200,9 @@ const Home = () => {
                 },
                 {
                   title: "Standard",
-                  price: "KES 250",
+                  price: "KES 500",
                   features: [
-                    "3 books/month",
+                    "8 books/month",
                     "Mid-tier catalog access",
                     "Pickup or delivery",
                   ],
@@ -210,7 +210,7 @@ const Home = () => {
                 },
                 {
                   title: "Premium",
-                  price: "KES 500",
+                  price: "KES 700",
                   features: [
                     "Unlimited books",
                     "Full catalog access",
@@ -449,13 +449,8 @@ const Home = () => {
             <h4 className="text-lg font-semibold mb-4">Services</h4>
             <ul className="space-y-2 text-gray-400">
               <li>
-                <Link to="/plans" className="hover:text-white">
+                <Link to="/subscription" className="hover:text-white">
                   Membership Plans
-                </Link>
-              </li>
-              <li>
-                <Link to="/locations" className="hover:text-white">
-                  Service Areas
                 </Link>
               </li>
               <li>

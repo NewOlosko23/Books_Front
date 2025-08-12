@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const NotFound = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-blue-50 to-blue-100 px-6 py-16">
       <motion.div
@@ -18,12 +20,21 @@ const NotFound = () => {
         <p className="text-gray-600 mb-6">
           The page you’re looking for doesn’t exist or has been moved.
         </p>
-        <Link
-          to="/"
-          className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-medium transition"
-        >
-          Go Back Home
-        </Link>
+        {user ? (
+          <Link
+            to="/dashboard"
+            className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-medium transition"
+          >
+            Go Back Dashboard
+          </Link>
+        ) : (
+          <Link
+            to="/"
+            className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-medium transition"
+          >
+            Go Back Home
+          </Link>
+        )}
       </motion.div>
     </div>
   );

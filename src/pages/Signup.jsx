@@ -16,6 +16,7 @@ const Signup = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -38,19 +39,12 @@ const Signup = () => {
       );
 
       const data = response.data;
+      if (data.error) {
+        setError(data.error);
+        return;
+      }
 
-      // Save token and user details in localStorage
-      localStorage.setItem("userToken", data.token);
-      localStorage.setItem(
-        "userDetails",
-        JSON.stringify({
-          username: data.username,
-          email: data.email,
-          _id: data._id,
-        })
-      );
-
-      alert("Registration successful!");
+      setMessage("Registration successful!");
       navigate("/dashboard");
 
       setFormData({
@@ -183,7 +177,7 @@ const Signup = () => {
             whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={loading}
-            className="md:col-span-2 w-full bg-blue-600 text-white py-2 rounded-xl mt-4 hover:bg-blue-700 transition shadow-md"
+            className="md:col-span-2 w-full bg-blue-600 text-white py-2 rounded-xl mt-4 hover:bg-blue-700 transition shadow-md cursor-pointer"
           >
             {loading ? "Signing Up..." : "Sign Up"}
           </motion.button>

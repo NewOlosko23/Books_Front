@@ -63,7 +63,9 @@ const Dashboard = () => {
           <div className="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold">Books Listed</h2>
-              <p className="text-gray-500 text-sm">{books.length} books</p>
+              <p className="text-gray-500 text-sm">
+                {books.length} <span></span>
+              </p>
             </div>
             <BookOpen className="text-blue-500" size={32} />
           </div>
@@ -82,13 +84,13 @@ const Dashboard = () => {
           <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
           <div className="flex gap-4">
             <Link to="/list-book">
-              <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition">
+              <button className="flex cursor-pointer items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition">
                 <PlusCircle size={18} />
                 List a Book
               </button>
             </Link>
             <Link to="/browse">
-              <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow transition">
+              <button className="flex cursor-pointer items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow transition">
                 <BookOpen size={18} />
                 Browse Books
               </button>
@@ -134,6 +136,9 @@ const Dashboard = () => {
                       }`}
                     >
                       {book.available ? "Available" : "Not Available"}
+                    </p>
+                    <p className="text-xs text-gray-500 mb-2">
+                      {book.description.slice(0, 100)}...
                     </p>
 
                     {/* Date Posted */}

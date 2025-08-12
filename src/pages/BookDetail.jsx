@@ -88,7 +88,7 @@ const BookDetail = () => {
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="mb-6 inline-flex items-center text-sm text-blue-600 hover:underline"
+          className="mb-6 inline-flex items-center cursor-pointer text-sm text-blue-600 hover:underline"
         >
           ← Back
         </button>
@@ -112,24 +112,31 @@ const BookDetail = () => {
             {book.title}
           </h1>
           <p className="text-lg text-gray-600 mb-2">By {book.author}</p>
+
           {book.owner && (
             <p className="text-sm text-gray-500 mb-4">
-              Shared by: {book.owner.name || "Unknown"}
+              Shared by:{" "}
+              <span className="font-medium">
+                {book.owner.name || "Unknown"}
+              </span>
             </p>
           )}
+
           <p className="text-sm text-gray-500 mb-4">
             Location: {book.location}
           </p>
           <p className="text-sm text-gray-500 mb-4">
             Posted on: {new Date(book.createdAt).toLocaleDateString()}
           </p>
+
           {book.category && (
             <p className="text-sm bg-blue-100 text-blue-700 inline-block px-3 py-1 rounded-full mb-2">
               Category: {book.category}
             </p>
           )}
+
           <p
-            className={`text-sm inline-block px-3 py-1 rounded-full mb-6 ml-2 ${
+            className={`text-sm inline-block px-3 py-1 rounded-full mb-6 ${
               book.available
                 ? "bg-green-100 text-green-700"
                 : "bg-red-100 text-red-700"
@@ -137,6 +144,16 @@ const BookDetail = () => {
           >
             {book.available ? "Available for Hire" : "Currently Unavailable"}
           </p>
+
+          {/* Book description */}
+          {book.description && (
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-gray-800 mb-1">
+                Description
+              </h2>
+              <p className="text-sm text-gray-600">{book.description}</p>
+            </div>
+          )}
 
           <button
             disabled={!book.available}
@@ -179,7 +196,7 @@ const BookDetail = () => {
 
               navigate(`/hire-book/${book._id}`);
             }}
-            className={`px-6 py-2 rounded-xl text-white font-semibold transition-all duration-300 ${
+            className={`px-6 py-2 cursor-pointer rounded-xl text-white font-semibold transition-all duration-300 ${
               book.available
                 ? "bg-blue-600 hover:bg-blue-700"
                 : "bg-gray-400 cursor-not-allowed"

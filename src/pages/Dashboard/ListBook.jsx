@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { UploadCloud } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const locations = [
   "Milimani",
@@ -147,6 +148,11 @@ const ListBook = () => {
       animate={{ opacity: 1, y: 0 }}
       className="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-2xl shadow-lg border border-gray-100"
     >
+      <p className="text-center py-3">
+        <Link to="/dashboard" className="text-blue-600 hover:underline">
+          &larr; Back to Dashboard
+        </Link>
+      </p>
       <h2 className="text-3xl font-extrabold text-center bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent mb-6">
         📚 List a New Book
       </h2>

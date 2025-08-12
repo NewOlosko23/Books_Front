@@ -5,10 +5,8 @@ import axios from "axios";
 
 const Browse = () => {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
   const [page, setPage] = useState(1);
   const [books, setBooks] = useState([]);
-  const [categories, setCategories] = useState(["All"]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -20,15 +18,7 @@ const Browse = () => {
         const res = await axios.get(
           "https://books-server-5p0q.onrender.com/api/books"
         );
-        setBooks(res.data);
-
-        const uniqueCategories = [
-          "All",
-          ...Array.from(
-            new Set(res.data.map((book) => book.category || "Other"))
-          ),
-        ];
-        setCategories(uniqueCategories);
+        setBooks(res.data.reverse());
       } catch (err) {
         setError("Failed to load books.");
       } finally {
@@ -40,11 +30,13 @@ const Browse = () => {
   }, []);
 
   const filteredBooks = books.filter((book) => {
-    const matchesSearch = book.title
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesCategory = category === "All" || book.category === category;
-    return matchesSearch && matchesCategory;
+    const searchTerm = search.toLowerCase();
+    return (
+      (book.title || "").toLowerCase().includes(searchTerm) ||
+      (book.author || "").toLowerCase().includes(searchTerm) ||
+      (book.category || "Other").toLowerCase().includes(searchTerm) ||
+      (book.owner?.name || "").toLowerCase().includes(searchTerm)
+    );
   });
 
   const pageCount = Math.ceil(filteredBooks.length / booksPerPage);
@@ -69,18 +61,13 @@ const Browse = () => {
         >
           Browse Books
         </motion.h1>
-
-        {/* Skeleton Loader Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {Array.from({ length: 8 }).map((_, idx) => (
             <div
               key={idx}
               className="bg-white rounded-xl shadow-md overflow-hidden animate-pulse"
             >
-              {/* Image placeholder */}
               <div className="w-full h-64 bg-gray-300"></div>
-
-              {/* Text placeholders */}
               <div className="p-4 space-y-3">
                 <div className="h-4 bg-gray-300 rounded w-3/4"></div>
                 <div className="h-3 bg-gray-300 rounded w-1/2"></div>
@@ -112,31 +99,37 @@ const Browse = () => {
         Browse Books
       </motion.h1>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by title..."
-          className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-
-        <select
-          value={category}
-          onChange={(e) => {
-            setCategory(e.target.value);
-            setPage(1);
-          }}
-          className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+      {/* Search Bar */}
+      <div className="flex justify-center mb-8">
+        <div className="relative w-full sm:w-1/3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"
+            />
+          </svg>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Search by title, author, category, or owner..."
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
       </div>
 
+      {/* Books Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
         {paginatedBooks.map((book, index) => (
           <motion.div
@@ -164,7 +157,6 @@ const Browse = () => {
                   <p className="text-xs text-gray-500 mb-2">
                     Location: {book.location}
                   </p>
-
                   <div className="flex flex-wrap gap-2">
                     {book.category && (
                       <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
@@ -188,6 +180,7 @@ const Browse = () => {
         ))}
       </div>
 
+      {/* Pagination */}
       <div className="mt-12 flex justify-center gap-2">
         {[...Array(pageCount)].map((_, i) => (
           <button
