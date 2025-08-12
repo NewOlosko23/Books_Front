@@ -15,6 +15,8 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import ListBook from "./pages/Dashboard/ListBook";
 import HireBook from "./pages/Dashboard/HireBook";
 import Subscription from "./pages/Dashboard/Subscription";
+import Terms from "./pages/Terms";
+import Recommend from "./pages/Recommend";
 
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -59,6 +61,8 @@ function App() {
         <Route path="/book/:id" element={<BookDetail />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/recommend" element={<Recommend />} />
 
         {/* Protected Route */}
         <Route

@@ -422,23 +422,18 @@ const Home = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/catalog" className="hover:text-white">
+                <Link to="/browse" className="hover:text-white">
                   Browse Books
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="hover:text-white">
+                <Link to="/" className="hover:text-white">
                   About Us
                 </Link>
               </li>
               <li>
                 <Link to="/contact" className="hover:text-white">
                   Contact
-                </Link>
-              </li>
-              <li>
-                <Link to="/faqs" className="hover:text-white">
-                  FAQs
                 </Link>
               </li>
             </ul>
@@ -459,8 +454,8 @@ const Home = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/blogs" className="hover:text-white">
-                  Blog
+                <Link to="/terms" className="hover:text-white">
+                  Terms and Conditions
                 </Link>
               </li>
             </ul>

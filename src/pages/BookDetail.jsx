@@ -86,12 +86,11 @@ const BookDetail = () => {
         <div className="border-b border-gray-300 mt-2 mb-4"></div>
 
         {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="mb-6 inline-flex items-center cursor-pointer text-sm text-blue-600 hover:underline"
-        >
-          ← Back
-        </button>
+        <p className="text-center py-3">
+          <Link to="/dashboard" className="text-blue-600 hover:underline">
+            &larr; Back to Dashboard
+          </Link>
+        </p>
       </div>
 
       {/* Book Card */}
@@ -117,7 +116,7 @@ const BookDetail = () => {
             <p className="text-sm text-gray-500 mb-4">
               Shared by:{" "}
               <span className="font-medium">
-                {book.owner.name || "Unknown"}
+                {book.owner.username || "Unknown"}
               </span>
             </p>
           )}

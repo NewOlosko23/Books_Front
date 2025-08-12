@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Subscription = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -56,6 +57,11 @@ const Subscription = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
       <div className="max-w-4xl bg-white rounded-xl shadow-md p-8 w-full">
+        <p className="text-center py-3">
+          <Link to="/dashboard" className="text-blue-600 hover:underline">
+            &larr; Back to Dashboard
+          </Link>
+        </p>
         <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">
           Activate Your Subscription
         </h1>

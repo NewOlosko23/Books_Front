@@ -12,59 +12,13 @@ const Signup = () => {
     phone: "",
     idNumber: "",
     location: "",
+    agreeTerms: false,
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await axios.post(
-        "https://books-server-5p0q.onrender.com/api/auth/register",
-        formData,
-        { headers: { "Content-Type": "application/json" } }
-      );
-
-      const data = response.data;
-      if (data.error) {
-        setError(data.error);
-        return;
-      }
-
-      setMessage("Registration successful!");
-      navigate("/dashboard");
-
-      setFormData({
-        username: "",
-        email: "",
-        password: "",
-        phone: "",
-        idNumber: "",
-        location: "",
-      });
-    } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("An unexpected error occurred. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const locations = [
     "Milimani",
@@ -81,88 +35,215 @@ const Signup = () => {
     "Kanyakwar",
   ];
 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+
+    if (!formData.agreeTerms) {
+      setError("You must agree to the terms and conditions.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        "https://books-server-5p0q.onrender.com/api/auth/register",
+        formData,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      const data = response.data;
+
+      if (data.error) {
+        setError(data.error);
+        setLoading(false);
+        return;
+      }
+
+      setMessage("Registration successful!");
+      setLoading(false);
+      navigate("/dashboard");
+
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        phone: "",
+        idNumber: "",
+        location: "",
+        agreeTerms: false,
+      });
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+      setLoading(false);
+    }
+  };
+
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-center bg-cover p-4"
+      className="min-h-screen flex items-center justify-center p-6 bg-center bg-cover"
       style={{
-        backgroundImage: `linear-gradient(to bottom right, rgba(255,255,255,0.85), rgba(240,240,255,0.9)), url(${Login})`,
+        backgroundImage: `linear-gradient(to bottom right, rgba(255,255,255,0.9), rgba(240,240,255,0.95)), url(${Login})`,
       }}
     >
       <motion.div
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-white bg-opacity-90 backdrop-blur-md shadow-2xl rounded-2xl p-8 w-full max-w-3xl"
+        className="bg-white bg-opacity-90 backdrop-blur-md shadow-2xl rounded-3xl p-10 max-w-xl w-full"
       >
-        <h2 className="text-2xl font-bold text-blue-600 text-center mb-6">
+        <h2 className="text-3xl font-extrabold text-blue-700 text-center mb-8">
           Create an Account
         </h2>
 
-        {error && (
-          <p className="text-red-500 text-sm text-center mb-4">{error}</p>
-        )}
-
-        <form
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
-          onSubmit={handleSubmit}
-        >
-          {[
-            {
-              name: "username",
-              label: "Username",
-              type: "text",
-              placeholder: "e.g. booklover23",
-            },
-            { name: "email", label: "Email", type: "email", placeholder: "" },
-            {
-              name: "password",
-              label: "Password",
-              type: "password",
-              placeholder: "••••••••",
-            },
-            {
-              name: "phone",
-              label: "Phone",
-              type: "tel",
-              placeholder: "+254712345678",
-            },
-            {
-              name: "idNumber",
-              label: "ID Number",
-              type: "text",
-              placeholder: "",
-            },
-          ].map(({ name, label, type, placeholder }) => (
-            <div key={name}>
-              <label className="block text-sm font-medium text-gray-700">
-                {label}
-              </label>
-              <input
-                type={type}
-                name={name}
-                value={formData[name]}
-                onChange={handleChange}
-                placeholder={placeholder}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
-                required
-              />
-            </div>
-          ))}
-
-          {/* Location select dropdown */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Username */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="username"
+              className="block text-sm font-semibold text-gray-700"
+            >
+              Username
+            </label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="e.g. booklover23"
+              required
+              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Choose a unique username to identify your account.
+            </p>
+          </div>
+
+          {/* Email */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-semibold text-gray-700"
+            >
+              Email Address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+              required
+              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              We'll send important updates to this email.
+            </p>
+          </div>
+
+          {/* Password */}
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-semibold text-gray-700"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              required
+              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Use at least 8 characters with a mix of letters and numbers.
+            </p>
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label
+              htmlFor="phone"
+              className="block text-sm font-semibold text-gray-700"
+            >
+              Phone Number
+            </label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="+254712345678"
+              required
+              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Provide a phone number for account recovery and notifications.
+            </p>
+          </div>
+
+          {/* ID Number */}
+          <div>
+            <label
+              htmlFor="idNumber"
+              className="block text-sm font-semibold text-gray-700"
+            >
+              ID Number
+            </label>
+            <input
+              id="idNumber"
+              name="idNumber"
+              type="text"
+              value={formData.idNumber}
+              onChange={handleChange}
+              placeholder="Enter your ID number"
+              required
+              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              This information is required for identity verification.
+            </p>
+          </div>
+
+          {/* Location */}
+          <div>
+            <label
+              htmlFor="location"
+              className="block text-sm font-semibold text-gray-700"
+            >
               Location
             </label>
             <select
+              id="location"
               name="location"
               value={formData.location}
               onChange={handleChange}
-              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
               required
+              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             >
               <option value="" disabled>
-                Select Location
+                Select your location
               </option>
               {locations.map((loc) => (
                 <option key={loc} value={loc}>
@@ -170,24 +251,71 @@ const Signup = () => {
                 </option>
               ))}
             </select>
+            <p className="text-xs text-gray-500 mt-1">
+              Select your nearest location for better service delivery.
+            </p>
           </div>
 
+          {/* Terms and Conditions */}
+          <div className="flex items-start">
+            <input
+              id="agreeTerms"
+              name="agreeTerms"
+              type="checkbox"
+              checked={formData.agreeTerms}
+              onChange={handleChange}
+              className="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              required
+            />
+            <label htmlFor="agreeTerms" className="ml-2 text-sm text-gray-700">
+              By signing up, you agree to the{" "}
+              <Link
+                to="/terms"
+                target="_blank"
+                className="text-blue-600 hover:underline"
+              >
+                Terms and Conditions
+              </Link>{" "}
+              of BooksArc.
+            </label>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <p className="text-center text-red-600 font-semibold text-sm">
+              {error}
+            </p>
+          )}
+
+          {/* Success Message */}
+          {message && (
+            <p className="text-center text-green-600 font-semibold text-sm">
+              {message}
+            </p>
+          )}
+
+          {/* Submit Button */}
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={loading}
-            className="md:col-span-2 w-full bg-blue-600 text-white py-2 rounded-xl mt-4 hover:bg-blue-700 transition shadow-md cursor-pointer"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className={`w-full py-3 rounded-xl text-white font-semibold shadow-md transition ${
+              loading
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+            }`}
           >
             {loading ? "Signing Up..." : "Sign Up"}
           </motion.button>
         </form>
 
-        <p className="text-sm text-center text-gray-500 mt-6">
+        <p className="mt-8 text-center text-gray-600 text-sm">
           Already have an account?{" "}
           <Link to="/login" className="text-blue-600 hover:underline">
-            Login
+            Log in here
           </Link>
+          .
         </p>
       </motion.div>
     </div>

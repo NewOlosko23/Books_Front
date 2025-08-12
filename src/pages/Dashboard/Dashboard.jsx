@@ -11,6 +11,11 @@ const Dashboard = () => {
   const [books, setBooks] = useState([]);
   const [loadingBooks, setLoadingBooks] = useState(false);
 
+  const formatCount = (n = 0) => {
+    if (n === 0) return "No books";
+    return `${n} book${n === 1 ? "" : "s"}`;
+  };
+
   useEffect(() => {
     if (userId !== "unknown") {
       const fetchBooks = async () => {
@@ -64,7 +69,7 @@ const Dashboard = () => {
             <div>
               <h2 className="text-lg font-semibold">Books Listed</h2>
               <p className="text-gray-500 text-sm">
-                {books.length} <span></span>
+                {formatCount(books?.length)}
               </p>
             </div>
             <BookOpen className="text-blue-500" size={32} />
