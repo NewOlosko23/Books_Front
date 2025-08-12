@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { UploadCloud } from "lucide-react";
 
 const locations = [
   "Milimani",
@@ -14,6 +16,20 @@ const locations = [
   "Nyalenda",
   "Obunga",
   "Kanyakwar",
+];
+
+const categories = [
+  "Fiction",
+  "Non-Fiction",
+  "Science",
+  "History",
+  "Children",
+  "Education",
+  "Technology",
+  "Biography",
+  "Romance",
+  "Mystery",
+  "Fantasy",
 ];
 
 const ListBook = () => {
@@ -52,16 +68,12 @@ const ListBook = () => {
         let width = img.width;
         let height = img.height;
 
-        if (width > height) {
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width;
-            width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
-            width = (width * maxHeight) / height;
-            height = maxHeight;
-          }
+        if (width > height && width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        } else if (height > maxHeight) {
+          width = (width * maxHeight) / height;
+          height = maxHeight;
         }
 
         canvas.width = width;
@@ -79,15 +91,8 @@ const ListBook = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!base64Image) {
-      setError("Please select a cover image.");
-      return;
-    }
-
-    if (!book.location) {
-      setError("Please select a location.");
-      return;
-    }
+    if (!base64Image) return setError("Please select a cover image.");
+    if (!book.location) return setError("Please select a location.");
 
     try {
       setLoading(true);
@@ -95,26 +100,24 @@ const ListBook = () => {
       setProgress(0);
 
       const user = localStorage.getItem("user");
-
       const token = user ? JSON.parse(user).token : null;
-      setProgress(25);
+
       if (!token) {
         setError("You must be logged in to list a book.");
         setLoading(false);
         return;
       }
 
+      setProgress(25);
+
       const payload = {
-        title: book.title,
-        author: book.author,
-        description: book.description,
-        location: book.location,
+        ...book,
         coverImage: base64Image,
       };
 
       setProgress(50);
 
-      const response = await axios.post(
+      await axios.post(
         "https://books-server-5p0q.onrender.com/api/books",
         payload,
         {
@@ -126,80 +129,92 @@ const ListBook = () => {
       );
 
       setProgress(100);
-
-      setMessage("Book listed successfully!");
+      setMessage("✅ Book listed successfully!");
       setBook({ title: "", author: "", description: "", location: "" });
       setFilePreview(null);
       setBase64Image("");
       setProgress(0);
     } catch (err) {
-      console.error(err);
-      setError(
-        err.response?.data?.message || "Something went wrong. Please try again."
-      );
+      setError(err.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-md mt-8">
-      <h2 className="text-2xl font-bold text-blue-600 mb-6 text-center">
-        List a Book
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-2xl shadow-lg border border-gray-100"
+    >
+      <h2 className="text-3xl font-extrabold text-center bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent mb-6">
+        📚 List a New Book
       </h2>
 
-      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-lg mb-4 text-center">
+          {error}
+        </div>
+      )}
+      {message && (
+        <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-2 rounded-lg mb-4 text-center">
+          {message}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Title */}
         <div>
-          <label className="block text-sm font-semibold mb-1">Book Title</label>
+          <label className="block text-sm font-medium mb-1">Book Title</label>
           <input
             type="text"
             name="title"
             value={book.title}
             onChange={handleChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            placeholder="e.g. The Great Gatsby"
             required
           />
         </div>
 
+        {/* Author */}
         <div>
-          <label className="block text-sm font-semibold mb-1">Author</label>
+          <label className="block text-sm font-medium mb-1">Author</label>
           <input
             type="text"
             name="author"
             value={book.author}
             onChange={handleChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            placeholder="e.g. F. Scott Fitzgerald"
             required
           />
         </div>
 
+        {/* Description */}
         <div>
-          <label className="block text-sm font-semibold mb-1">
-            Book Description
-          </label>
+          <label className="block text-sm font-medium mb-1">Description</label>
           <textarea
             name="description"
             value={book.description}
             onChange={handleChange}
             rows="4"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            placeholder="Briefly describe the book..."
           />
         </div>
 
+        {/* Location */}
         <div>
-          <label className="block text-sm font-semibold mb-1">Location</label>
+          <label className="block text-sm font-medium mb-1">Location</label>
           <select
             name="location"
             value={book.location}
             onChange={handleChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
             required
           >
-            <option value="" disabled>
-              Select location
-            </option>
+            <option value="">Select a location</option>
             {locations.map((loc) => (
               <option key={loc} value={loc}>
                 {loc}
@@ -208,17 +223,38 @@ const ListBook = () => {
           </select>
         </div>
 
+        {/* Category */}
         <div>
-          <label className="block text-sm font-semibold mb-1">
-            Cover Image
-          </label>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            className="w-full"
-            accept="image/*"
+          <label className="block text-sm font-medium mb-1">Category</label>
+          <select
+            name="category"
+            value={book.category || ""}
+            onChange={handleChange}
+            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
             required
-          />
+          >
+            <option value="">Select a category</option>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Image Upload */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Cover Image</label>
+          <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 transition">
+            <UploadCloud className="w-10 h-10 text-gray-400" />
+            <span className="text-gray-500">Click or drag to upload</span>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </label>
           {filePreview && (
             <img
               src={filePreview}
@@ -229,26 +265,29 @@ const ListBook = () => {
         </div>
 
         {progress > 0 && (
-          <p className="text-sm text-blue-600 font-semibold text-center">
-            Uploading: {progress}%
-          </p>
+          <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+            <div
+              className="bg-blue-600 h-2 rounded-full transition-all"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
         )}
 
-        <div>
-          {message && (
-            <p className="text-green-600 text-center mb-4">{message}</p>
-          )}
-        </div>
-
-        <button
+        <motion.button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+          whileHover={{ scale: !loading ? 1.02 : 1 }}
+          whileTap={{ scale: 0.98 }}
+          className={`w-full py-3 rounded-lg font-semibold text-white transition ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
         >
           {loading ? `Uploading... ${progress}%` : "List Book"}
-        </button>
+        </motion.button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 

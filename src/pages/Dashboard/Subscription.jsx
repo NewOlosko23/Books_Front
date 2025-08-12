@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const Subscription = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState("card"); // 'card' or 'mpesa'
+  const [paymentMethod, setPaymentMethod] = useState("card");
   const [paymentStatus, setPaymentStatus] = useState("");
   const [loading, setLoading] = useState(false);
 

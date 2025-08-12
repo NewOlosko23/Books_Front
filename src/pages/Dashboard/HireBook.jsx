@@ -18,27 +18,20 @@ const HireBook = () => {
   });
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("userDetails")) || null;
-    if (!user) {
-      alert("You must be logged in to hire a book.");
-      navigate("/login");
-      return;
-    }
-    if (!user.subscription || user.subscription.status !== "active") {
-      navigate("/subscription");
-      return;
-    }
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const userData = storedUser?.data;
 
     setForm((prev) => ({
       ...prev,
-      fullName: user.username || "",
-      email: user.email || "",
-      phone: user.phone || "",
+      fullName: userData.username || "",
+      email: userData.email || "",
+      phone: userData.phone || "",
       pickupDate: new Date().toISOString().split("T")[0],
     }));
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -47,9 +40,9 @@ const HireBook = () => {
           `https://books-server-5p0q.onrender.com/api/books/${bookId}`
         );
         setBook(res.data);
-        setLoadingBook(false);
       } catch (err) {
         setError("Failed to load book details");
+      } finally {
         setLoadingBook(false);
       }
     };
@@ -58,7 +51,6 @@ const HireBook = () => {
   }, [bookId]);
 
   if (loadingBook) return <p>Loading book info...</p>;
-
   if (!book) return <p>Book not found.</p>;
 
   const handleChange = (e) => {
@@ -71,20 +63,25 @@ const HireBook = () => {
     setSubmitting(true);
 
     try {
+      const storedUser = JSON.parse(localStorage.getItem("user"));
       const token = localStorage.getItem("userToken");
-      if (!token) {
+
+      if (!storedUser?.data || !token) {
         setError("You must be logged in to hire a book.");
         setSubmitting(false);
         return;
       }
 
-      const res = await axios.post(
+      const hireData = {
+        userId: storedUser.data.id,
+        ...form,
+      };
+
+      await axios.post(
         `https://books-server-5p0q.onrender.com/api/hire/${bookId}`,
-        {},
+        hireData,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -181,6 +178,7 @@ const HireBook = () => {
           >
             {submitting ? "Submitting..." : "Submit Request"}
           </button>
+          <div></div>
         </form>
       </motion.div>
     </div>

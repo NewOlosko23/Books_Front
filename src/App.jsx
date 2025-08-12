@@ -56,7 +56,7 @@ function App() {
 
         {/* Open Routes */}
         <Route path="/browse" element={<Browse />} />
-        <Route path="/book/:slug" element={<BookDetail />} />
+        <Route path="/book/:id" element={<BookDetail />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/contact" element={<Contact />} />
 
@@ -80,7 +80,7 @@ function App() {
         />
 
         <Route
-          path="/hire-book/:slug"
+          path="/hire-book/:bookId"
           element={
             <ProtectedRoute>
               <HireBook />

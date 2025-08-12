@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BookOpen, Clock, PlusCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -17,7 +17,7 @@ const Dashboard = () => {
         try {
           setLoadingBooks(true);
           const response = await axios.get(
-            `https://books-server-5p0q.onrender.com/api/books/${userId}`,
+            `https://books-server-5p0q.onrender.com/api/user/${userId}/books`,
             {
               headers: {
                 Authorization: `Bearer ${storedUser.token}`,
@@ -99,17 +99,48 @@ const Dashboard = () => {
         {/* My Books Section */}
         <div className="bg-white p-6 rounded-xl shadow-md mb-6">
           <h2 className="text-xl font-bold mb-4">My Books</h2>
+
           {loadingBooks ? (
             <p className="text-gray-500">Loading your books...</p>
           ) : books.length > 0 ? (
-            <ul className="space-y-2">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {books.map((book) => (
                 <li
                   key={book._id}
-                  className="p-3 border rounded-lg flex justify-between"
+                  className="border rounded-lg overflow-hidden shadow-sm bg-gray-50 hover:shadow-md transition-shadow duration-300"
                 >
-                  <span>{book.title}</span>
-                  <span className="text-sm text-gray-500">{book.status}</span>
+                  {/* Cover Image */}
+                  {book.coverImage && (
+                    <img
+                      src={book.coverImage}
+                      alt={book.title}
+                      className="w-full h-48 object-cover"
+                    />
+                  )}
+
+                  <div className="p-4">
+                    {/* Title */}
+                    <h3 className="text-lg font-semibold mb-1">{book.title}</h3>
+
+                    {/* Author */}
+                    <p className="text-sm text-gray-600 mb-1">
+                      By <span className="font-medium">{book.author}</span>
+                    </p>
+
+                    {/* Availability */}
+                    <p
+                      className={`text-sm font-medium mb-1 ${
+                        book.available ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
+                      {book.available ? "Available" : "Not Available"}
+                    </p>
+
+                    {/* Date Posted */}
+                    <p className="text-xs text-gray-500">
+                      Posted on {new Date(book.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
                 </li>
               ))}
             </ul>
