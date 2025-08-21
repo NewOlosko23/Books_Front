@@ -17,6 +17,8 @@ import HireBook from "./pages/Dashboard/HireBook";
 import Subscription from "./pages/Dashboard/Subscription";
 import Terms from "./pages/Terms";
 import Recommend from "./pages/Recommend";
+import Password from "./pages/Password";
+import ResetPassword from "./pages/ResetPassword";
 
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -52,6 +54,22 @@ function App() {
           element={
             <PublicRoute>
               <Signup />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <PublicRoute>
+              <ResetPassword />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/reset-password/:token"
+          element={
+            <PublicRoute>
+              <Password />
             </PublicRoute>
           }
         />

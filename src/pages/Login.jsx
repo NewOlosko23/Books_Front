@@ -104,9 +104,12 @@ const Login = () => {
           </div>
 
           <div className="text-right text-sm">
-            <a href="#" className="text-blue-600 hover:underline">
+            <Link
+              to="/forgot-password"
+              className="text-blue-600 hover:underline"
+            >
               Forgot password?
-            </a>
+            </Link>
           </div>
 
           <motion.button
