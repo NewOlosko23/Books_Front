@@ -134,16 +134,15 @@ const ListBook = () => {
         }
       );
 
-      const createdBookId = response.data?.book?._id;
+      //const createdBookId = response.data?.book?._id;
 
-      if (!createdBookId) {
-        throw new Error("Book ID not returned from server.");
-      }
+      //if (!createdBookId) {throw new Error("Book ID not returned from server.");}
 
-      const BookLink = `https://booksarc.co.ke/books/${createdBookId}`;
+      //const BookLink = `https://booksarc.co.ke/books/${createdBookId}`;
 
       setProgress(100);
-      setMessage(`Book listed successfully! View the book here: ${BookLink}`);
+      //setMessage(`Book listed successfully! View the book here: ${BookLink}`);
+      setMessage(`Book listed successfully!`);
 
       // Reset form
       setBook({ title: "", author: "", description: "", location: "" });
