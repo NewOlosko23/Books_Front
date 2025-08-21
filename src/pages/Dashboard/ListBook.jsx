@@ -10,6 +10,11 @@ const locations = [
   "Riat Hills",
   "Mountain View",
   "Mamboleo",
+  "Nyamasaria",
+  "Kiboswa",
+  "Otonglo",
+  "Kisian",
+  "Rabuor",
   "Kibos",
   "Ojola",
   "Manyatta",
@@ -117,7 +122,8 @@ const ListBook = () => {
 
       setProgress(50);
 
-      await axios.post(
+      // Make the POST request and get the response
+      const response = await axios.post(
         "https://books-server-5p0q.onrender.com/api/books",
         payload,
         {
@@ -128,14 +134,26 @@ const ListBook = () => {
         }
       );
 
+      const createdBookId = response.data?.book?._id;
+
+      if (!createdBookId) {
+        throw new Error("Book ID not returned from server.");
+      }
+
+      const BookLink = `https://booksarc.co.ke/books/${createdBookId}`;
+
       setProgress(100);
-      setMessage("✅ Book listed successfully!");
+      setMessage(`Book listed successfully! View the book here: ${BookLink}`);
+
+      // Reset form
       setBook({ title: "", author: "", description: "", location: "" });
       setFilePreview(null);
       setBase64Image("");
       setProgress(0);
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong.");
+      setError(
+        err.response?.data?.message || err.message || "Something went wrong."
+      );
     } finally {
       setLoading(false);
     }
@@ -147,7 +165,7 @@ const ListBook = () => {
       animate={{ opacity: 1, y: 0 }}
       className="max-w-2xl mx-auto mt-24 p-8 bg-white rounded-2xl shadow-lg border border-gray-100"
     >
-      <h2 className="text-3xl font-extrabold text-center bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent mb-6">
+      <h2 className="text-3xl font-extrabold text-center bg-gradient-to-r from-indigo-500 to-indigo-600 bg-clip-text text-transparent mb-6">
         List a New Book
       </h2>
 
@@ -160,7 +178,7 @@ const ListBook = () => {
             name="title"
             value={book.title}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
             placeholder="e.g. The Great Gatsby"
             required
           />
@@ -177,7 +195,7 @@ const ListBook = () => {
             name="author"
             value={book.author}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
             placeholder="e.g. F. Scott Fitzgerald"
             required
           />
@@ -195,7 +213,7 @@ const ListBook = () => {
             value={book.description}
             onChange={handleChange}
             rows="4"
-            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
             placeholder="Briefly describe the book..."
           />
           <p className="mt-1 text-xs text-gray-500">
@@ -211,7 +229,7 @@ const ListBook = () => {
             name="location"
             value={book.location}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
             required
           >
             <option value="">Select a location</option>
@@ -232,9 +250,9 @@ const ListBook = () => {
           <label className="block text-sm font-medium mb-1">Category</label>
           <select
             name="category"
-            value={book.category || ""}
+            value={book.category}
             onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-400 focus:outline-none"
             required
           >
             <option value="">Select a category</option>
@@ -253,7 +271,7 @@ const ListBook = () => {
         {/* Image Upload */}
         <div>
           <label className="block text-sm font-medium mb-2">Cover Image</label>
-          <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 transition">
+          <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-indigo-400 transition">
             <UploadCloud className="w-10 h-10 text-gray-400" />
             <span className="text-gray-500">Click or drag to upload</span>
             <input
@@ -282,7 +300,7 @@ const ListBook = () => {
         {progress > 0 && (
           <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all"
+              className="bg-indigo-600 h-2 rounded-full transition-all"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -304,10 +322,10 @@ const ListBook = () => {
           disabled={loading}
           whileHover={{ scale: !loading ? 1.02 : 1 }}
           whileTap={{ scale: 0.98 }}
-          className={`w-full py-3 rounded-lg font-semibold text-white transition ${
+          className={`w-full py-3 rounded-lg font-semibold text-white transition  cursor-pointer ${
             loading
               ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700"
+              : "bg-indigo-600 hover:bg-indigo-700"
           }`}
         >
           {loading ? `Uploading... ${progress}%` : "List Book"}

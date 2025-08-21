@@ -46,7 +46,7 @@ const Dashboard = () => {
       <div className="max-w-6xl mx-auto">
         {/* Welcome */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-600">
+          <h1 className="text-3xl font-bold text-indigo-600">
             Welcome, {userData.username || "Guest"}!
           </h1>
         </div>
@@ -72,7 +72,7 @@ const Dashboard = () => {
                 {formatCount(books?.length)}
               </p>
             </div>
-            <BookOpen className="text-blue-500" size={36} />
+            <BookOpen className="text-indigo-600" size={36} />
           </div>
 
           <div className="bg-white p-6 rounded-2xl shadow-lg flex items-center justify-between">
@@ -89,7 +89,7 @@ const Dashboard = () => {
           <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
           <div className="flex flex-wrap gap-4">
             <Link to="/list-book">
-              <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow transition cursor-pointer">
+              <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl shadow transition cursor-pointer">
                 <PlusCircle size={18} />
                 List a Book
               </button>

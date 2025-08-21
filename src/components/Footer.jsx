@@ -29,19 +29,19 @@ const Footer = ({ brand = "BooksArc" }) => {
             <h3 className="text-sm font-semibold text-gray-900">Quick Links</h3>
             <Link
               to="/browse"
-              className="text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md px-2 py-1 transition"
+              className="text-sm w-fit text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md px-2 py-1 transition"
             >
               Browse
             </Link>
             <Link
               to="/how-it-works"
-              className="text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md px-2 py-1 transition"
+              className="text-sm w-fit text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md px-2 py-1 transition"
             >
               How It Works
             </Link>
             <Link
               to="/contact"
-              className="text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md px-2 py-1 transition"
+              className="text-sm w-fit text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md px-2 py-1 transition"
             >
               Contact
             </Link>

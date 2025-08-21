@@ -52,12 +52,17 @@ export default function Header({ brand = "BooksArc" }) {
       : { to: "/", label: "Home", icon: Home },
 
     { to: "/browse", label: "Browse", icon: BookOpen },
-    { to: "/how-it-works", label: "How It Works", icon: Info },
+
+    // Show How It Works only if user is NOT logged in
+    !user && { to: "/how-it-works", label: "How It Works", icon: Info },
+
+    // Recommend is always visible
+    { to: "/recommend", label: "Recommend", icon: BookOpen },
 
     user
       ? { to: "/dashboard/profile", label: "Profile", icon: User }
       : { to: "/contact", label: "Contact", icon: Phone },
-  ];
+  ].filter(Boolean);
 
   const isActive = (to) =>
     typeof window !== "undefined" && window.location?.pathname === to;
@@ -115,17 +120,28 @@ export default function Header({ brand = "BooksArc" }) {
           {/* Right actions */}
           <div className="hidden md:flex items-center gap-2">
             {user ? (
-              <button
-                onClick={handleLogout}
-                className="inline-flex items-center cursor-pointer gap-2 rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="hidden lg:inline">Logout</span>
-              </button>
+              <>
+                {/* + Add Book button */}
+                <Link
+                  to="/list-book"
+                  className="inline-flex items-center gap-1 rounded-full bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                >
+                  + Add Book
+                </Link>
+
+                {/* Logout button */}
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex items-center cursor-pointer gap-2 rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span className="hidden lg:inline">Logout</span>
+                </button>
+              </>
             ) : (
               <Link
                 to="/signup"
-                className="inline-flex items-center gap-2 cursor-pointer rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
               >
                 <User className="h-4 w-4" />
                 <span className="hidden lg:inline">Get Started</span>

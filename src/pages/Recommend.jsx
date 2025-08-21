@@ -67,11 +67,13 @@ const Recommend = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 mt-16">
       <div className="max-w-xl w-full bg-white rounded-2xl shadow-lg p-8 animate-fadeIn">
-        <h1 className="text-3xl font-bold mb-4 text-center text-blue-700">
+        <h1 className="text-3xl font-bold mb-4 text-center text-indigo-700">
           Recommend a Book
         </h1>
-        <p className="mb-6 text-gray-700 text-center">
-          Can't find the book you're looking for? Let others know what you want!
+        <p className="mb-6 text-gray-700 text-center text-[15px]">
+          If you couldn't find the book you're looking for, you can recommend it
+          here. Other users may have it and can post it, helping the community
+          grow its collection.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -80,6 +82,9 @@ const Recommend = () => {
             <label htmlFor="title" className="block font-semibold mb-1">
               Book Title <span className="text-red-500">*</span>
             </label>
+            <p className="text-sm text-gray-500 mb-1">
+              Enter the name of the book you want to recommend.
+            </p>
             <input
               id="title"
               type="text"
@@ -88,7 +93,7 @@ const Recommend = () => {
               value={formData.title}
               onChange={handleChange}
               disabled={submitting}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
               required
             />
           </div>
@@ -98,6 +103,9 @@ const Recommend = () => {
             <label htmlFor="author" className="block font-semibold mb-1">
               Author <span className="text-red-500">*</span>
             </label>
+            <p className="text-sm text-gray-500 mb-1">
+              Enter the author's name of the book you want to recommend.
+            </p>
             <input
               id="author"
               type="text"
@@ -106,7 +114,7 @@ const Recommend = () => {
               value={formData.author}
               onChange={handleChange}
               disabled={submitting}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
               required
             />
           </div>
@@ -116,6 +124,10 @@ const Recommend = () => {
             <label htmlFor="description" className="block font-semibold mb-1">
               Description <span className="text-red-500">*</span>
             </label>
+            <p className="text-sm text-gray-500 mb-1">
+              Provide any additional details that may help others identify or
+              post this book.
+            </p>
             <textarea
               id="description"
               name="description"
@@ -124,7 +136,7 @@ const Recommend = () => {
               value={formData.description}
               onChange={handleChange}
               disabled={submitting}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
               required
             />
           </div>
@@ -134,6 +146,9 @@ const Recommend = () => {
             <label htmlFor="coverImage" className="block font-semibold mb-1">
               Cover Image (Optional)
             </label>
+            <p className="text-sm text-gray-500 mb-1">
+              You can attach a cover image if available.
+            </p>
             <input
               id="coverImage"
               type="file"
@@ -157,8 +172,8 @@ const Recommend = () => {
             disabled={submitting}
             className={`w-full py-3 rounded-xl text-white font-semibold cursor-pointer transition-colors ${
               submitting
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
+                ? "bg-indigo-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700"
             }`}
           >
             {submitting ? "Submitting..." : "Submit Recommendation"}

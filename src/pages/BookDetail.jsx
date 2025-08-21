@@ -36,8 +36,60 @@ const BookDetail = () => {
 
   if (loading) {
     return (
-      <div className="text-center py-20 text-gray-600 animate-pulse">
-        Loading book details...
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 py-5 animate-pulse">
+        {/* Image Carousel Skeleton */}
+        <div className="relative w-full h-[420px] md:h-[500px] rounded-2xl overflow-hidden shadow-xl bg-gray-300 mb-10"></div>
+
+        {/* Details Section Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Header Skeleton */}
+            <div className="space-y-2">
+              <div className="h-8 w-3/4 bg-gray-300 rounded"></div>
+              <div className="h-4 w-1/2 bg-gray-300 rounded"></div>
+              <div className="h-3 w-1/3 bg-gray-300 rounded mt-2"></div>
+            </div>
+
+            {/* Quick Specs Skeleton */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-gray-100 p-5 rounded-xl">
+              {Array(4)
+                .fill(0)
+                .map((_, i) => (
+                  <div key={i} className="flex flex-col items-center space-y-2">
+                    <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
+                    <div className="h-4 w-16 bg-gray-300 rounded"></div>
+                    <div className="h-3 w-20 bg-gray-300 rounded"></div>
+                  </div>
+                ))}
+            </div>
+
+            {/* Description Skeleton */}
+            <div className="space-y-2 mt-4">
+              <div className="h-6 w-1/3 bg-gray-300 rounded"></div>
+              <div className="space-y-2">
+                <div className="h-3 w-full bg-gray-300 rounded"></div>
+                <div className="h-3 w-full bg-gray-300 rounded"></div>
+                <div className="h-3 w-5/6 bg-gray-300 rounded"></div>
+                <div className="h-3 w-2/3 bg-gray-300 rounded"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar Skeleton */}
+          <aside className="space-y-6">
+            <div className="bg-gray-100 rounded-xl p-6 border border-gray-200 space-y-4">
+              <div className="h-6 w-1/2 bg-gray-300 rounded"></div>
+              <div className="h-10 w-full bg-gray-300 rounded"></div>
+              <div className="h-4 w-3/4 bg-gray-300 rounded mt-2"></div>
+            </div>
+
+            <div className="bg-gray-100 rounded-xl p-6 space-y-2">
+              <div className="h-4 w-1/2 bg-gray-300 rounded"></div>
+              <div className="h-3 w-1/3 bg-gray-300 rounded"></div>
+            </div>
+          </aside>
+        </div>
       </div>
     );
   }
@@ -60,7 +112,7 @@ const BookDetail = () => {
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 py-5">
       {/* Image Carousel */}
       <div className="relative w-full h-[420px] md:h-[500px] rounded-2xl overflow-hidden shadow-xl bg-black">
         <img
@@ -165,56 +217,78 @@ const BookDetail = () => {
         </motion.div>
 
         {/* Sidebar */}
+        {/* Sidebar */}
         <aside className="space-y-6">
-          <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Hire this Book
-            </h2>
-            <button
-              disabled={!book.available}
-              onClick={() => {
-                if (!userData) {
-                  setMessage(
-                    <>
-                      You must be logged in to hire a book.{" "}
-                      <Link to="/login" className="text-blue-600 underline">
-                        Login now
-                      </Link>
-                    </>
-                  );
-                  return;
-                }
+          {userData?._id !== book.owner?._id ? (
+            // Hire Section for other users
+            <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Hire this Book
+              </h2>
+              <button
+                disabled={!book.available}
+                onClick={() => {
+                  if (!userData) {
+                    setMessage(
+                      <>
+                        You must be logged in to hire a book.{" "}
+                        <Link to="/login" className="text-blue-600 underline">
+                          Login now
+                        </Link>
+                      </>
+                    );
+                    return;
+                  }
 
-                if (
-                  !userData.subscription ||
-                  userData.subscription.status !== "active"
-                ) {
-                  setMessage(
-                    <>
-                      You need an active subscription to hire books.{" "}
-                      <Link
-                        to="/subscription"
-                        className="text-blue-600 underline"
-                      >
-                        Subscribe now
-                      </Link>
-                    </>
-                  );
-                  return;
-                }
+                  if (
+                    !userData.subscription ||
+                    userData.subscription.status !== "active"
+                  ) {
+                    setMessage(
+                      <>
+                        You need an active subscription to hire books.{" "}
+                        <Link
+                          to="/subscription"
+                          className="text-blue-600 underline"
+                        >
+                          Subscribe now
+                        </Link>
+                      </>
+                    );
+                    return;
+                  }
 
-                navigate(`/hire-book/${book._id}`);
-              }}
-              className={`w-full py-3 rounded-lg text-white font-semibold transition-all duration-300 ${
-                book.available
-                  ? "bg-indigo-600 hover:bg-indigo-700"
-                  : "bg-gray-400 cursor-not-allowed"
-              }`}
-            >
-              {book.available ? "Hire this Book" : "Unavailable"}
-            </button>
-            {message && <p className="mt-4 text-sm text-red-500">{message}</p>}
-          </div>
+                  navigate(`/hire-book/${book._id}`);
+                }}
+                className={`w-full py-3 rounded-lg text-white font-semibold transition-all duration-300 ${
+                  book.available
+                    ? "bg-indigo-600 hover:bg-indigo-700"
+                    : "bg-gray-400 cursor-not-allowed"
+                }`}
+              >
+                {book.available ? "Hire this Book" : "Unavailable"}
+              </button>
+              {message && (
+                <p className="mt-4 text-sm text-red-500">{message}</p>
+              )}
+            </div>
+          ) : (
+            // Update Section for the owner
+            <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Update this Book
+              </h2>
+              <button
+                onClick={() => navigate(`/update-book/${book._id}`)}
+                className="w-full py-3 rounded-lg text-white font-semibold bg-green-600 hover:bg-green-700 transition-all duration-300"
+              >
+                Update Book Details
+              </button>
+              <p className="mt-4 text-sm text-gray-500">
+                Add or edit details of your book posting.
+              </p>
+            </div>
+          )}
 
           <div className="bg-gray-50 rounded-xl p-6 shadow-sm text-sm text-gray-600">
             <p className="mb-2">
