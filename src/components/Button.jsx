@@ -27,6 +27,7 @@ const Button = ({
 
   return (
     <button
+      type={props.type || "button"} // default to "button" if not provided
       className={`${base} ${sizes[size]} ${variants[variant]} ${className}`}
       {...props}
     >

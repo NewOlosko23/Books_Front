@@ -34,10 +34,64 @@ const Browse = () => {
   const handleSearch = () => {
     setPage(1);
   };
+  // Updated getEstateFromCoordinates with multiple fallbacks
+  const getEstateFromCoordinates = async (lat, lng) => {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
 
-  const handleAroundMe = () => {
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent": "booksarc-app",
+          "Accept-Language": "en",
+        },
+      });
+      const data = await res.json();
+
+      // Try multiple fallbacks for more reliable location detection
+      return (
+        data.address.suburb ||
+        data.address.neighbourhood ||
+        data.address.village ||
+        data.address.town ||
+        data.address.city ||
+        data.address.county ||
+        ""
+      );
+    } catch (err) {
+      console.error("Error fetching estate:", err);
+      return "";
+    }
+  };
+
+  // Around Me handler
+  const handleAroundMe = async (e) => {
     e.preventDefault();
-    alert("Allow location services in your browser");
+
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const estate = await getEstateFromCoordinates(latitude, longitude);
+
+        if (estate) {
+          setLocation(estate); // This will automatically update input value
+          setPage(1); // Reset to first page
+        } else {
+          alert("Could not detect your location. Please enter manually.");
+          setLocation(""); // Optional fallback
+        }
+
+        setLoading(false);
+      },
+      (err) => {
+        console.error("Geolocation error:", err);
+        alert("Failed to get your location. Please allow location access.");
+      }
+    );
   };
 
   useEffect(() => {
@@ -98,15 +152,42 @@ const Browse = () => {
 
   if (loading) {
     return (
-      <div className="px-4 py-16 bg-gradient-to-br from-gray-50 to-white min-h-screen mt-12">
+      <div className="px-4 py-16 max-w-5xl mx-auto bg-gradient-to-br from-gray-50 to-white min-h-screen mt-12">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="text-4xl font-bold text-center text-blue-600 mb-6"
-        >
-          Browse Books
-        </motion.h1>
+        ></motion.h1>
+        <div className="p-4 bg-white rounded-lg shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Skeleton for Keyword */}
+            <div className="flex flex-col gap-2">
+              <div className="h-4 w-24 bg-gray-300 rounded animate-pulse"></div>
+              <div className="h-10 w-full bg-gray-300 rounded animate-pulse"></div>
+              <div className="h-3 w-40 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+
+            {/* Skeleton for Location */}
+            <div className="flex flex-col gap-2">
+              <div className="h-4 w-24 bg-gray-300 rounded animate-pulse"></div>
+              <div className="h-10 w-full bg-gray-300 rounded animate-pulse"></div>
+              <div className="h-3 w-40 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+
+            {/* Skeleton for Category */}
+            <div className="flex flex-col gap-2">
+              <div className="h-4 w-24 bg-gray-300 rounded animate-pulse"></div>
+              <div className="h-10 w-full bg-gray-300 rounded animate-pulse"></div>
+              <div className="h-3 w-40 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          </div>
+
+          {/* Skeleton for Button */}
+          <div className="mt-4 flex justify-end">
+            <div className="h-10 w-32 bg-gray-300 rounded animate-pulse"></div>
+          </div>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {Array.from({ length: 8 }).map((_, idx) => (
             <div
@@ -153,9 +234,7 @@ const Browse = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="text-4xl font-bold text-center text-blue-600 mb-6"
-          >
-            Browse Books
-          </motion.h1>
+          ></motion.h1>
           {/* Search Bar */}
           <div className="max-w-6xl mx-auto bg-white p-6 rounded-2xl shadow-lg mb-8">
             <h2 className="text-xl font-bold mb-6">Search Books</h2>
@@ -225,7 +304,11 @@ const Browse = () => {
 
             {/* Actions Row */}
             <div className="flex flex-wrap justify-between items-center mt-6 gap-3 text-sm">
-              <Button className="cursor-pointer" onClick={handleAroundMe}>
+              <Button
+                type="button"
+                className="cursor-pointer"
+                onClick={handleAroundMe}
+              >
                 <MapPin className="w-4 h-4" />
                 Around Me
               </Button>
@@ -247,7 +330,8 @@ const Browse = () => {
               </div>
             </div>
           </div>
-          ;{/* Books Grid */}
+
+          {/* Books Grid */}
           <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {paginatedBooks.length === 0 ? (
               <p className="text-gray-700 col-span-full text-center">
