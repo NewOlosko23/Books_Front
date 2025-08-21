@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Helmet } from "react-helmet-async";
 
 const Recommend = () => {
   const [formData, setFormData] = useState({
@@ -65,122 +66,144 @@ const Recommend = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 mt-16">
-      <div className="max-w-xl w-full bg-white rounded-2xl shadow-lg p-8 animate-fadeIn">
-        <h1 className="text-3xl font-bold mb-4 text-center text-indigo-700">
-          Recommend a Book
-        </h1>
-        <p className="mb-6 text-gray-700 text-center text-[15px]">
-          If you couldn't find the book you're looking for, you can recommend it
-          here. Other users may have it and can post it, helping the community
-          grow its collection.
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Title */}
-          <div>
-            <label htmlFor="title" className="block font-semibold mb-1">
-              Book Title <span className="text-red-500">*</span>
-            </label>
-            <p className="text-sm text-gray-500 mb-1">
-              Enter the name of the book you want to recommend.
+    <>
+      <>
+        <Helmet>
+          <title>Recommend a Book - BooksArc Kisumu</title>
+          <meta
+            name="description"
+            content="Can't find the book you want in Kisumu? Recommend it here and let other users post it on BooksArc."
+          />
+          <meta name="robots" content="index, follow" />
+        </Helmet>
+      </>
+      <>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 mt-16">
+          <div className="max-w-xl w-full bg-white rounded-2xl shadow-lg p-8 animate-fadeIn">
+            <h1 className="text-3xl font-bold mb-4 text-center text-indigo-700">
+              Recommend a Book
+            </h1>
+            <p className="mb-6 text-gray-700 text-center text-[15px]">
+              If you couldn't find the book you're looking for, you can
+              recommend it here. Other users may have it and can post it,
+              helping the community grow its collection.
             </p>
-            <input
-              id="title"
-              type="text"
-              name="title"
-              placeholder="Enter the title of the book"
-              value={formData.title}
-              onChange={handleChange}
-              disabled={submitting}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-              required
-            />
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Title */}
+              <div>
+                <label htmlFor="title" className="block font-semibold mb-1">
+                  Book Title <span className="text-red-500">*</span>
+                </label>
+                <p className="text-sm text-gray-500 mb-1">
+                  Enter the name of the book you want to recommend.
+                </p>
+                <input
+                  id="title"
+                  type="text"
+                  name="title"
+                  placeholder="Enter the title of the book"
+                  value={formData.title}
+                  onChange={handleChange}
+                  disabled={submitting}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+                  required
+                />
+              </div>
+
+              {/* Author */}
+              <div>
+                <label htmlFor="author" className="block font-semibold mb-1">
+                  Author <span className="text-red-500">*</span>
+                </label>
+                <p className="text-sm text-gray-500 mb-1">
+                  Enter the author's name of the book you want to recommend.
+                </p>
+                <input
+                  id="author"
+                  type="text"
+                  name="author"
+                  placeholder="Enter the author of the book"
+                  value={formData.author}
+                  onChange={handleChange}
+                  disabled={submitting}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+                  required
+                />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block font-semibold mb-1"
+                >
+                  Description <span className="text-red-500">*</span>
+                </label>
+                <p className="text-sm text-gray-500 mb-1">
+                  Provide any additional details that may help others identify
+                  or post this book.
+                </p>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows={4}
+                  placeholder="Add any additional details"
+                  value={formData.description}
+                  onChange={handleChange}
+                  disabled={submitting}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+                  required
+                />
+              </div>
+
+              {/* Cover Image */}
+              <div>
+                <label
+                  htmlFor="coverImage"
+                  className="block font-semibold mb-1"
+                >
+                  Cover Image (Optional)
+                </label>
+                <p className="text-sm text-gray-500 mb-1">
+                  You can attach a cover image if available.
+                </p>
+                <input
+                  id="coverImage"
+                  type="file"
+                  name="coverImage"
+                  accept="image/*"
+                  onChange={handleChange}
+                  disabled={submitting}
+                  className="w-full"
+                />
+              </div>
+
+              {error && (
+                <p className="text-red-600 font-medium text-center">{error}</p>
+              )}
+              {message && (
+                <p className="text-green-600 font-medium text-center">
+                  {message}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className={`w-full py-3 rounded-xl text-white font-semibold cursor-pointer transition-colors ${
+                  submitting
+                    ? "bg-indigo-400 cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700"
+                }`}
+              >
+                {submitting ? "Submitting..." : "Submit Recommendation"}
+              </button>
+            </form>
           </div>
-
-          {/* Author */}
-          <div>
-            <label htmlFor="author" className="block font-semibold mb-1">
-              Author <span className="text-red-500">*</span>
-            </label>
-            <p className="text-sm text-gray-500 mb-1">
-              Enter the author's name of the book you want to recommend.
-            </p>
-            <input
-              id="author"
-              type="text"
-              name="author"
-              placeholder="Enter the author of the book"
-              value={formData.author}
-              onChange={handleChange}
-              disabled={submitting}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-              required
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <label htmlFor="description" className="block font-semibold mb-1">
-              Description <span className="text-red-500">*</span>
-            </label>
-            <p className="text-sm text-gray-500 mb-1">
-              Provide any additional details that may help others identify or
-              post this book.
-            </p>
-            <textarea
-              id="description"
-              name="description"
-              rows={4}
-              placeholder="Add any additional details"
-              value={formData.description}
-              onChange={handleChange}
-              disabled={submitting}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-              required
-            />
-          </div>
-
-          {/* Cover Image */}
-          <div>
-            <label htmlFor="coverImage" className="block font-semibold mb-1">
-              Cover Image (Optional)
-            </label>
-            <p className="text-sm text-gray-500 mb-1">
-              You can attach a cover image if available.
-            </p>
-            <input
-              id="coverImage"
-              type="file"
-              name="coverImage"
-              accept="image/*"
-              onChange={handleChange}
-              disabled={submitting}
-              className="w-full"
-            />
-          </div>
-
-          {error && (
-            <p className="text-red-600 font-medium text-center">{error}</p>
-          )}
-          {message && (
-            <p className="text-green-600 font-medium text-center">{message}</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className={`w-full py-3 rounded-xl text-white font-semibold cursor-pointer transition-colors ${
-              submitting
-                ? "bg-indigo-400 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700"
-            }`}
-          >
-            {submitting ? "Submitting..." : "Submit Recommendation"}
-          </button>
-        </form>
-      </div>
-    </div>
+        </div>
+      </>
+    </>
   );
 };
 
