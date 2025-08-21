@@ -42,7 +42,6 @@ const Subscription = () => {
     setLoading(true);
     setPaymentStatus("");
 
-    // Simulate payment delay
     setTimeout(() => {
       setLoading(false);
       setPaymentStatus(
@@ -50,23 +49,22 @@ const Subscription = () => {
           plans.find((p) => p.id === selectedPlan).name
         }.`
       );
-      // TODO: Integrate real payment & backend update here
     }, 2000);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
-      <div className="max-w-4xl bg-white rounded-xl shadow-md p-8 w-full">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 mt-14">
+      <div className="max-w-4xl w-full bg-white rounded-2xl shadow-lg p-8">
         <p className="text-center py-3">
           <Link to="/dashboard" className="text-blue-600 hover:underline">
             &larr; Back to Dashboard
           </Link>
         </p>
+
         <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">
           Activate Your Subscription
         </h1>
-
-        <p className="text-gray-700 mb-6 text-center max-w-lg mx-auto">
+        <p className="text-gray-700 mb-8 text-center max-w-lg mx-auto">
           To borrow books, you need an active subscription. Choose a plan below
           and complete payment.
         </p>
@@ -77,12 +75,13 @@ const Subscription = () => {
             <div
               key={plan.id}
               onClick={() => handlePlanSelect(plan.id)}
-              className={`cursor-pointer border rounded-lg p-6 shadow-md transition
+              className={`cursor-pointer border rounded-xl p-6 shadow-md transition duration-300
                 ${
                   selectedPlan === plan.id
-                    ? "border-blue-600 bg-blue-50"
-                    : "border-gray-300 hover:border-blue-400"
-                }`}
+                    ? "border-blue-600 bg-blue-50 scale-105"
+                    : "border-gray-300 hover:border-blue-400 hover:scale-105"
+                }
+              `}
             >
               <h2 className="text-xl font-semibold mb-2">{plan.name}</h2>
               <p className="text-gray-600 mb-4">{plan.description}</p>
@@ -97,21 +96,25 @@ const Subscription = () => {
         <div className="flex justify-center mb-6 space-x-6">
           <button
             onClick={() => setPaymentMethod("card")}
-            className={`px-6 py-2 rounded-full font-semibold transition ${
-              paymentMethod === "card"
-                ? "bg-blue-600 text-white shadow-md"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
+            className={`px-6 py-2 rounded-full font-semibold transition duration-300
+              ${
+                paymentMethod === "card"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }
+            `}
           >
             Credit/Debit Card
           </button>
           <button
             onClick={() => setPaymentMethod("mpesa")}
-            className={`px-6 py-2 rounded-full font-semibold transition ${
-              paymentMethod === "mpesa"
-                ? "bg-green-600 text-white shadow-md"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
+            className={`px-6 py-2 rounded-full font-semibold transition duration-300
+              ${
+                paymentMethod === "mpesa"
+                  ? "bg-green-600 text-white shadow-md"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }
+            `}
           >
             M-Pesa
           </button>
@@ -123,8 +126,8 @@ const Subscription = () => {
             <>
               <div className="mb-4">
                 <label
-                  className="block font-semibold mb-1"
                   htmlFor="cardNumber"
+                  className="block font-semibold mb-1"
                 >
                   Card Number
                 </label>
@@ -133,15 +136,15 @@ const Subscription = () => {
                   id="cardNumber"
                   placeholder="1234 5678 9012 3456"
                   required
-                  className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   maxLength={19}
                   disabled={loading}
+                  className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
 
               <div className="flex gap-4 mb-4">
                 <div className="flex-1">
-                  <label className="block font-semibold mb-1" htmlFor="expiry">
+                  <label htmlFor="expiry" className="block font-semibold mb-1">
                     Expiry Date
                   </label>
                   <input
@@ -149,13 +152,13 @@ const Subscription = () => {
                     id="expiry"
                     placeholder="MM/YY"
                     required
-                    className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     maxLength={5}
                     disabled={loading}
+                    className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block font-semibold mb-1" htmlFor="cvv">
+                  <label htmlFor="cvv" className="block font-semibold mb-1">
                     CVV
                   </label>
                   <input
@@ -163,9 +166,9 @@ const Subscription = () => {
                     id="cvv"
                     placeholder="123"
                     required
-                    className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     maxLength={4}
                     disabled={loading}
+                    className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none"
                   />
                 </div>
               </div>
@@ -173,29 +176,23 @@ const Subscription = () => {
           )}
 
           {paymentMethod === "mpesa" && (
-            <>
+            <div className="mb-6">
               <p className="mb-4 text-gray-700 text-center">
-                Please enter your M-Pesa phone number below to receive a payment
-                prompt.
+                Enter your M-Pesa phone number to receive a payment prompt.
               </p>
-              <div className="mb-6">
-                <label
-                  className="block font-semibold mb-1"
-                  htmlFor="mpesaNumber"
-                >
-                  M-Pesa Phone Number
-                </label>
-                <input
-                  type="tel"
-                  id="mpesaNumber"
-                  placeholder="+2547XXXXXXXX"
-                  required
-                  pattern="^\+2547\d{8}$"
-                  className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                  disabled={loading}
-                />
-              </div>
-            </>
+              <label htmlFor="mpesaNumber" className="block font-semibold mb-1">
+                M-Pesa Phone Number
+              </label>
+              <input
+                type="tel"
+                id="mpesaNumber"
+                placeholder="+2547XXXXXXXX"
+                required
+                pattern="^\+2547\d{8}$"
+                disabled={loading}
+                className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 outline-none"
+              />
+            </div>
           )}
 
           {paymentStatus && (
@@ -226,7 +223,7 @@ const Subscription = () => {
         <p className="mt-6 text-center text-gray-500 text-sm">
           Need help? Contact our{" "}
           <a
-            href="mailto:support@booksarc.com"
+            href="mailto:support@booksarc.co.ke"
             className="text-blue-600 underline"
           >
             support team

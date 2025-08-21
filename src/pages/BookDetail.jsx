@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
+import { MapPin, BookOpen, User, Calendar, Bookmark } from "lucide-react";
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -14,6 +15,7 @@ const BookDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -34,32 +36,8 @@ const BookDetail = () => {
 
   if (loading) {
     return (
-      <div className="px-4 py-16 bg-gradient-to-br from-white to-blue-50 min-h-screen">
-        <div className="max-w-4xl mx-auto mb-4">
-          {/* Breadcrumb Skeleton */}
-          <div className="h-4 w-48 bg-gray-300 rounded animate-pulse"></div>
-          <div className="border-b border-gray-300 mt-2 mb-4"></div>
-
-          {/* Back Button Skeleton */}
-          <div className="h-4 w-20 bg-gray-300 rounded animate-pulse"></div>
-        </div>
-
-        {/* Skeleton Card */}
-        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-8 animate-pulse">
-          {/* Image placeholder */}
-          <div className="w-full md:w-1/3 h-80 bg-gray-300 rounded-xl"></div>
-
-          {/* Text placeholders */}
-          <div className="flex-1 space-y-4">
-            <div className="h-6 w-3/4 bg-gray-300 rounded"></div>
-            <div className="h-4 w-1/2 bg-gray-300 rounded"></div>
-            <div className="h-3 w-1/3 bg-gray-300 rounded"></div>
-            <div className="h-3 w-1/4 bg-gray-300 rounded"></div>
-            <div className="h-5 w-32 bg-gray-300 rounded-full"></div>
-            <div className="h-5 w-40 bg-gray-300 rounded-full"></div>
-            <div className="h-10 w-40 bg-gray-300 rounded-xl mt-6"></div>
-          </div>
-        </div>
+      <div className="text-center py-20 text-gray-600 animate-pulse">
+        Loading book details...
       </div>
     );
   }
@@ -74,140 +52,180 @@ const BookDetail = () => {
     );
   }
 
+  const images =
+    book.images && book.images.length > 0 ? book.images : [book.coverImage];
+
+  const nextImage = () => setCurrentIndex((prev) => (prev + 1) % images.length);
+  const prevImage = () =>
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+
   return (
-    <div className="px-4 py-16 bg-gradient-to-br from-white to-blue-50 min-h-screen">
-      {/* Breadcrumb Path */}
-      <div className="max-w-4xl mx-auto mb-4">
-        <p className="text-sm text-gray-600">
-          <span className="text-blue-600">Browse</span> /{" "}
-          <span className="text-blue-600">Books</span> /{" "}
-          <span className="font-medium text-gray-800">{book.title}</span>
-        </p>
-        <div className="border-b border-gray-300 mt-2 mb-4"></div>
-
-        {/* Back Button */}
-        <p className="text-center py-3">
-          <Link to="/dashboard" className="text-blue-600 hover:underline">
-            &larr; Back to Dashboard
-          </Link>
-        </p>
-      </div>
-
-      {/* Book Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 flex flex-col md:flex-row gap-8"
-      >
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+      {/* Image Carousel */}
+      <div className="relative w-full h-[420px] md:h-[500px] rounded-2xl overflow-hidden shadow-xl bg-black">
         <img
-          src={book.coverImage}
-          alt={book.title}
-          className="w-full md:w-1/3 h-80 object-cover rounded-xl"
+          src={images[currentIndex]}
+          alt={`${book.title} ${currentIndex + 1}`}
+          className="w-full h-full object-contain transition-transform duration-500"
         />
 
-        <div className="flex-1 space-x-2">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            {book.title}
-          </h1>
-          <p className="text-lg text-gray-600 mb-2">By {book.author}</p>
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-900/70 hover:bg-gray-900/90 text-white w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full shadow-lg transition transform hover:scale-110"
+            >
+              ‹
+            </button>
 
-          {book.owner && (
-            <p className="text-sm text-gray-500 mb-4">
-              Shared by:{" "}
-              <span className="font-medium">
-                {book.owner.username || "Unknown"}
+            <button
+              onClick={nextImage}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-900/70 hover:bg-gray-900/90 text-white w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full shadow-lg transition transform hover:scale-110"
+            >
+              ›
+            </button>
+
+            <div className="absolute bottom-4 right-4 bg-gray-900/75 text-white text-sm px-3 py-1 rounded-full shadow">
+              {currentIndex + 1} / {images.length}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Details Section */}
+      <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* Main Content */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="lg:col-span-2 space-y-8"
+        >
+          {/* Header */}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {book.title}
+            </h1>
+            <p className="flex items-center gap-2 text-md text-gray-600">
+              <User className="w-5 h-5 text-indigo-600" /> By {book.author}
+            </p>
+            <p className="flex items-center gap-2 text-sm text-gray-500 mt-2">
+              <Calendar className="w-4 h-4 text-indigo-600" />
+              Posted on {new Date(book.createdAt).toLocaleDateString()}
+            </p>
+          </div>
+
+          {/* Quick Specs */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-gray-50 p-5 rounded-xl shadow-sm">
+            <div className="flex flex-col items-center text-center">
+              <BookOpen className="w-6 h-6 text-gray-700" />
+              <span className="font-semibold text-gray-900">
+                {book.category}
               </span>
-            </p>
-          )}
+              <span className="text-sm text-gray-500">Category</span>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <Bookmark className="w-6 h-6 text-gray-700" />
+              <span
+                className={`font-semibold ${
+                  book.available ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {book.available ? "Available" : "Unavailable"}
+              </span>
+              <span className="text-sm text-gray-500">Status</span>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <User className="w-6 h-6 text-gray-700" />
+              <span className="font-semibold text-gray-900">
+                {book.owner?.username || "Unknown"}
+              </span>
+              <span className="text-sm text-gray-500">Shared By</span>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <MapPin className="w-6 h-6 text-gray-700" />
+              <span className="font-semibold text-gray-900">
+                {book.location}
+              </span>
+              <span className="text-sm text-gray-500">Location</span>
+            </div>
+          </div>
 
-          <p className="text-sm text-gray-500 mb-4">
-            Location: {book.location}
-          </p>
-          <p className="text-sm text-gray-500 mb-4">
-            Posted on: {new Date(book.createdAt).toLocaleDateString()}
-          </p>
-
-          {book.category && (
-            <p className="text-sm bg-blue-100 text-blue-700 inline-block px-3 py-1 rounded-full mb-2">
-              Category: {book.category}
-            </p>
-          )}
-
-          <p
-            className={`text-sm inline-block px-3 py-1 rounded-full mb-6 ${
-              book.available
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
-            }`}
-          >
-            {book.available ? "Available for Hire" : "Currently Unavailable"}
-          </p>
-
-          {/* Book description */}
+          {/* Description */}
           {book.description && (
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-1">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-3">
                 Description
               </h2>
-              <p className="text-sm text-gray-600">{book.description}</p>
+              <p className="text-gray-700 leading-relaxed text-[15px]">
+                {book.description}
+              </p>
             </div>
           )}
+        </motion.div>
 
-          <button
-            disabled={!book.available}
-            onClick={() => {
-              const storedUser = JSON.parse(localStorage.getItem("user"));
-              const userData = storedUser?.data;
+        {/* Sidebar */}
+        <aside className="space-y-6">
+          <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Hire this Book
+            </h2>
+            <button
+              disabled={!book.available}
+              onClick={() => {
+                if (!userData) {
+                  setMessage(
+                    <>
+                      You must be logged in to hire a book.{" "}
+                      <Link to="/login" className="text-blue-600 underline">
+                        Login now
+                      </Link>
+                    </>
+                  );
+                  return;
+                }
 
-              if (!userData) {
-                setMessage(
-                  <>
-                    You must be logged in to hire a book.{" "}
-                    <Link
-                      to="/login"
-                      style={{ color: "blue", textDecoration: "underline" }}
-                    >
-                      Login now
-                    </Link>
-                  </>
-                );
-                return;
-              }
+                if (
+                  !userData.subscription ||
+                  userData.subscription.status !== "active"
+                ) {
+                  setMessage(
+                    <>
+                      You need an active subscription to hire books.{" "}
+                      <Link
+                        to="/subscription"
+                        className="text-blue-600 underline"
+                      >
+                        Subscribe now
+                      </Link>
+                    </>
+                  );
+                  return;
+                }
 
-              if (
-                !userData.subscription ||
-                userData.subscription.status !== "active"
-              ) {
-                setMessage(
-                  <>
-                    You need an active subscription to hire books.{" "}
-                    <Link
-                      to="/subscription"
-                      style={{ color: "blue", textDecoration: "underline" }}
-                    >
-                      Subscribe now
-                    </Link>
-                  </>
-                );
-                return;
-              }
-
-              navigate(`/hire-book/${book._id}`);
-            }}
-            className={`px-6 py-2 cursor-pointer rounded-xl text-white font-semibold transition-all duration-300 ${
-              book.available
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}
-          >
-            {book.available ? "Hire this Book" : "Unavailable"}
-          </button>
-          <div>
+                navigate(`/hire-book/${book._id}`);
+              }}
+              className={`w-full py-3 rounded-lg text-white font-semibold transition-all duration-300 ${
+                book.available
+                  ? "bg-indigo-600 hover:bg-indigo-700"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
+            >
+              {book.available ? "Hire this Book" : "Unavailable"}
+            </button>
             {message && <p className="mt-4 text-sm text-red-500">{message}</p>}
           </div>
-        </div>
-      </motion.div>
+
+          <div className="bg-gray-50 rounded-xl p-6 shadow-sm text-sm text-gray-600">
+            <p className="mb-2">
+              ←{" "}
+              <Link to="/dashboard" className="text-indigo-600 underline">
+                Back to Dashboard
+              </Link>
+            </p>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 };

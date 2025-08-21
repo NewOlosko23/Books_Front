@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
-import ResetImage from "../assets/login.jpg"; // reuse your login background
+import ResetImage from "../assets/new.jpg";
+import { Link } from "react-router-dom";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -76,6 +77,16 @@ const ResetPassword = () => {
           >
             {loading ? "Sending..." : "Send Reset Link"}
           </motion.button>
+          {/* Signup Redirect */}
+          <p className="text-center text-gray-600 text-sm mt-8">
+            Don’t have an account?{" "}
+            <Link
+              to="/signup"
+              className="text-blue-600 hover:underline font-medium"
+            >
+              Get Started
+            </Link>
+          </p>
         </form>
       </motion.div>
     </div>

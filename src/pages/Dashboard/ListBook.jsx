@@ -2,7 +2,6 @@ import { useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { UploadCloud } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const locations = [
   "Milimani",
@@ -146,15 +145,10 @@ const ListBook = () => {
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-2xl shadow-lg border border-gray-100"
+      className="max-w-2xl mx-auto mt-24 p-8 bg-white rounded-2xl shadow-lg border border-gray-100"
     >
-      <p className="text-center py-3">
-        <Link to="/dashboard" className="text-blue-600 hover:underline">
-          &larr; Back to Dashboard
-        </Link>
-      </p>
       <h2 className="text-3xl font-extrabold text-center bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent mb-6">
-        📚 List a New Book
+        List a New Book
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -170,6 +164,9 @@ const ListBook = () => {
             placeholder="e.g. The Great Gatsby"
             required
           />
+          <p className="mt-1 text-xs text-gray-500">
+            Enter the full title of the book exactly as it appears on the cover.
+          </p>
         </div>
 
         {/* Author */}
@@ -184,6 +181,10 @@ const ListBook = () => {
             placeholder="e.g. F. Scott Fitzgerald"
             required
           />
+          <p className="mt-1 text-xs text-gray-500">
+            Provide the full name of the book’s author. If multiple authors,
+            separate with commas.
+          </p>
         </div>
 
         {/* Description */}
@@ -197,6 +198,10 @@ const ListBook = () => {
             className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 focus:outline-none"
             placeholder="Briefly describe the book..."
           />
+          <p className="mt-1 text-xs text-gray-500">
+            Write a short summary of the book. Mention key themes, topics, or
+            what makes it interesting. Keep it under 200 words.
+          </p>
         </div>
 
         {/* Location */}
@@ -216,6 +221,10 @@ const ListBook = () => {
               </option>
             ))}
           </select>
+          <p className="mt-1 text-xs text-gray-500">
+            Select the location where this book can be picked up or borrowed.
+            Choose the nearest option to make it easy for others.
+          </p>
         </div>
 
         {/* Category */}
@@ -235,6 +244,10 @@ const ListBook = () => {
               </option>
             ))}
           </select>
+          <p className="mt-1 text-xs text-gray-500">
+            Choose the category that best matches the book. Examples: Fiction,
+            Non-fiction, Biography, Science, etc.
+          </p>
         </div>
 
         {/* Image Upload */}
@@ -250,12 +263,19 @@ const ListBook = () => {
               onChange={handleFileChange}
             />
           </label>
+          <p className="mt-1 text-xs text-gray-500">
+            Upload a clear image of the book’s cover. This helps other users
+            recognize the book quickly.
+          </p>
+
           {filePreview && (
-            <img
-              src={filePreview}
-              alt="Preview"
-              className="w-full h-40 object-cover rounded-lg mt-3 border"
-            />
+            <div className="mt-3 border-2 border-black rounded-lg overflow-hidden flex items-center justify-center bg-gray-50">
+              <img
+                src={filePreview}
+                alt="Preview"
+                className="w-full h-40 object-contain"
+              />
+            </div>
           )}
         </div>
 

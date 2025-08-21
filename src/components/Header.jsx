@@ -1,153 +1,224 @@
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Menu,
+  X,
+  Home,
+  BookOpen,
+  Info,
+  Phone,
+  User,
+  LogOut,
+  LayoutDashboard,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const Header = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
+export default function Header({ brand = "BooksArc" }) {
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const panelRef = useRef(null);
   const navigate = useNavigate();
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
-  const closeMenu = () => setMenuOpen(false);
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    logout(); // clear user state in context
-    navigate("/login"); // redirect to login page
-    closeMenu(); // close mobile menu if open
+    logout();
+    navigate("/");
   };
 
+  // scroll effect for shadow/bg
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // close menu on escape
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  // 🔹 Navigation links
+  const nav = [
+    user
+      ? { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard }
+      : { to: "/", label: "Home", icon: Home },
+
+    { to: "/browse", label: "Browse", icon: BookOpen },
+    { to: "/how-it-works", label: "How It Works", icon: Info },
+
+    user
+      ? { to: "/dashboard/profile", label: "Profile", icon: User }
+      : { to: "/contact", label: "Contact", icon: Phone },
+  ];
+
+  const isActive = (to) =>
+    typeof window !== "undefined" && window.location?.pathname === to;
+
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        {/* Logo */}
-        <Link to={user ? "/dashboard" : "/"}>
-          <motion.h1
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-2xl font-extrabold text-blue-600 tracking-wide"
-          >
-            📚 BooksArc
-          </motion.h1>
-        </Link>
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all ${
+        scrolled ? "bg-white/95 shadow-sm" : "bg-white/80"
+      }`}
+      role="banner"
+    >
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 bg-white text-gray-900 px-3 py-2 rounded-md shadow"
+      >
+        Skip to content
+      </a>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-6 items-center">
-          {user && (
-            <Link
-              to="/dashboard"
-              className="text-gray-700 hover:text-blue-600 transition"
-            >
-              Dashboard
-            </Link>
-          )}
-
-          <Link
-            to="/browse"
-            className="text-gray-700 hover:text-blue-600 transition"
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="h-16 flex items-center justify-between">
+          {/* Brand */}
+          <a
+            href={user ? "/dashboard" : "/"}
+            className="flex items-center gap-2"
           >
-            Browse
-          </Link>
-          <Link
-            to="/how-it-works"
-            className="text-gray-700 hover:text-blue-600 transition"
-          >
-            How It Works
-          </Link>
-          <Link
-            to="/contact"
-            className="text-gray-700 hover:text-blue-600 transition"
-          >
-            Contact
-          </Link>
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 border border-gray-200">
+              <BookOpen className="h-5 w-5 text-gray-700" />
+            </span>
+            <span className="text-xl font-semibold tracking-tight text-gray-900">
+              {brand}
+            </span>
+          </a>
 
-          {user ? (
-            <button
-              onClick={handleLogout}
-              className="ml-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl transition-all shadow-md"
-            >
-              Logout
-            </button>
-          ) : (
-            <Link
-              to="/signup"
-              className="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-all shadow-md"
-            >
-              Get Started
-            </Link>
-          )}
-        </nav>
+          {/* Desktop nav */}
+          <nav
+            className="hidden md:flex items-center gap-1 lg:gap-2"
+            aria-label="Primary"
+          >
+            {nav.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition
+                  ${
+                    isActive(item.to)
+                      ? "text-gray-900 bg-gray-100"
+                      : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                  }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={toggleMenu}
-          className="md:hidden text-gray-700 hover:text-blue-600"
-        >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+          {/* Right actions */}
+          <div className="hidden md:flex items-center gap-2">
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center cursor-pointer gap-2 rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden lg:inline">Logout</span>
+              </button>
+            ) : (
+              <Link
+                to="/signup"
+                className="inline-flex items-center gap-2 cursor-pointer rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+              >
+                <User className="h-4 w-4" />
+                <span className="hidden lg:inline">Get Started</span>
+              </Link>
+            )}
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setOpen(true)}
+            className="md:hidden inline-flex items-center justify-center rounded-lg p-2 text-gray-700 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+            aria-label="Open menu"
+            aria-controls="mobile-menu"
+            aria-expanded={open}
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Navigation */}
-      {menuOpen && (
-        <motion.div
-          initial={{ height: 0 }}
-          animate={{ height: "auto" }}
-          className="md:hidden bg-white px-4 pb-4 space-y-2 overflow-hidden border-t border-gray-200"
-        >
-          {user && (
-            <Link
-              to="/dashboard"
-              onClick={closeMenu}
-              className="block text-gray-700 hover:text-blue-600"
-            >
-              Dashboard
-            </Link>
-          )}
-          <Link
-            to="/browse"
-            onClick={closeMenu}
-            className="block text-gray-700 hover:text-blue-600"
+      {/* Mobile drawer */}
+      {open && (
+        <div className="w-full">
+          <div
+            className="fixed inset-0 z-40 bg-black/70 w-full"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+          <aside
+            id="mobile-menu"
+            ref={panelRef}
+            role="dialog"
+            aria-label="Navigation"
+            className="fixed right-0 top-0 z-50 h-fit w-full max-w-2xl bg-white shadow-xl border-l border-gray-200"
           >
-            Browse
-          </Link>
-          <Link
-            to="/how-it-works"
-            onClick={closeMenu}
-            className="block text-gray-700 hover:text-blue-600"
-          >
-            How It Works
-          </Link>
-          <Link
-            to="/contact"
-            onClick={closeMenu}
-            className="block text-gray-700 hover:text-blue-600"
-          >
-            Contact
-          </Link>
-          {user ? (
-            <button
-              onClick={() => {
-                handleLogout();
-              }}
-              className="block w-full bg-red-600 hover:bg-red-700 text-white text-center px-4 py-2 rounded-xl transition-all shadow-md"
-            >
-              Logout
-            </button>
-          ) : (
-            <Link
-              to="/signup"
-              onClick={closeMenu}
-              className="block bg-blue-600 hover:bg-blue-700 text-white text-center px-4 py-2 rounded-xl transition-all shadow-md"
-            >
-              Get Started
-            </Link>
-          )}
-        </motion.div>
+            <div className="flex items-center justify-between px-4 py-3 bg-gray-200">
+              <Link to="/" className="text-lg font-semibold text-gray-900">
+                {brand}
+              </Link>
+              <button
+                onClick={() => setOpen(false)}
+                className="rounded-lg p-2 text-gray-700 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+                aria-label="Close menu"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="px-4 py-4 bg-gray-200">
+              <nav className="mt-4 space-y-1" aria-label="Mobile Primary">
+                {nav.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-3 text-[15px] text-gray-800 hover:bg-gray-50 border border-transparent hover:border-gray-200"
+                    >
+                      <Icon className="h-5 w-5 text-gray-600" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              <div className="mt-6">
+                {user ? (
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setOpen(false);
+                    }}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 hover:bg-gray-50"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </button>
+                ) : (
+                  <Link
+                    to="/signup"
+                    onClick={() => setOpen(false)}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 hover:bg-gray-50"
+                  >
+                    <User className="h-4 w-4" />
+                    Get Started
+                  </Link>
+                )}
+              </div>
+            </div>
+          </aside>
+        </div>
       )}
     </header>
   );
-};
-
-export default Header;
+}

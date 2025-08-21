@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
-import ResetImage from "../assets/login.jpg";
+import ResetImage from "../assets/new.jpg";
 
 const Password = () => {
   const { token } = useParams();

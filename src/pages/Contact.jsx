@@ -4,28 +4,31 @@ import { Mail, MapPin, Phone } from "lucide-react";
 
 const ContactUs = () => {
   return (
-    <div className="px-6 py-16 bg-gradient-to-b from-white to-gray-50 min-h-screen">
+    <section className="px-6 py-20 bg-white/70 backdrop-blur-sm min-h-screen mt-14">
+      {/* Heading */}
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-5xl font-extrabold text-center text-blue-700 mb-4"
+        className="text-5xl font-extrabold text-center text-blue-700 mb-6"
       >
         Contact Us
       </motion.h1>
 
-      <p className="text-center text-gray-600 max-w-xl mx-auto text-lg mb-12">
+      <p className="text-center text-gray-600 max-w-2xl mx-auto text-lg mb-16">
         Have questions, feedback, or need help? Reach out and we’ll get back to
         you as soon as possible.
       </p>
 
+      {/* Content Grid */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Contact Info Section */}
+        {/* Contact Info */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
+          whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-gradient-to-br from-blue-100 to-blue-50 rounded-3xl shadow-xl p-8 space-y-6"
+          viewport={{ once: true }}
+          className="bg-white/70 backdrop-blur-md border border-gray-200 rounded-3xl shadow-md hover:shadow-xl p-8 space-y-8 transition-all duration-300"
         >
           <div className="flex items-center space-x-4">
             <div className="bg-white p-3 rounded-full shadow-md">
@@ -64,9 +67,10 @@ const ContactUs = () => {
         {/* Contact Form */}
         <motion.form
           initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
+          whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-gradient-to-br from-gray-100 to-white rounded-3xl shadow-xl p-8 space-y-6"
+          viewport={{ once: true }}
+          className="bg-white/70 backdrop-blur-md border border-gray-200 rounded-3xl shadow-md hover:shadow-xl p-8 space-y-6 transition-all duration-300"
         >
           <div>
             <label className="block font-medium text-gray-700 mb-1">
@@ -104,15 +108,15 @@ const ContactUs = () => {
             ></textarea>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-lg font-semibold transition"
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            className="w-full bg-blue-600/90 backdrop-blur-md hover:bg-blue-700 text-white py-3 rounded-xl text-lg font-semibold shadow-md transition"
           >
             Send Message
-          </button>
+          </motion.button>
         </motion.form>
       </div>
-    </div>
+    </section>
   );
 };
 

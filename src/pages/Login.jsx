@@ -40,7 +40,7 @@ const Login = () => {
       login({ data: data.user, token: data.token });
       navigate("/dashboard");
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else {
         setError("Invalid email or password. Please try again.");
@@ -53,43 +53,47 @@ const Login = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-center bg-cover p-4"
+      className="min-h-screen flex items-center justify-center bg-center bg-cover p-4 mt-14"
       style={{
         backgroundImage: `linear-gradient(to bottom right, rgba(255, 255, 255, 0.8), rgba(240, 240, 255, 0.9)), url(${LoginImage})`,
       }}
     >
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-white bg-opacity-90 shadow-2xl backdrop-blur-lg rounded-2xl p-8 w-full max-w-md"
+        className="bg-white/70 backdrop-blur-md shadow-2xl rounded-3xl p-10 w-full max-w-lg"
       >
-        <h2 className="text-2xl font-bold text-blue-600 text-center mb-6">
+        <h2 className="text-3xl font-extrabold text-blue-700 text-center mb-8">
           Welcome Back
         </h2>
 
         {error && (
-          <p className="text-red-500 text-sm text-center mb-3">{error}</p>
+          <p className="text-red-600 text-center text-sm font-semibold mb-4">
+            {error}
+          </p>
         )}
 
-        <form className="space-y-4" onSubmit={handleLogin}>
+        <form className="space-y-6" onSubmit={handleLogin}>
+          {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-600">
-              Email
+            <label className="block text-sm font-semibold text-gray-700">
+              Email Address
             </label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
+              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
               placeholder="you@example.com"
               required
             />
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-600">
+            <label className="block text-sm font-semibold text-gray-700">
               Password
             </label>
             <input
@@ -97,12 +101,13 @@ const Login = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
+              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
               placeholder="••••••••"
               required
             />
           </div>
 
+          {/* Forgot Password */}
           <div className="text-right text-sm">
             <Link
               to="/forgot-password"
@@ -112,20 +117,29 @@ const Login = () => {
             </Link>
           </div>
 
+          {/* Login Button */}
           <motion.button
-            whileTap={{ scale: 0.95 }}
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 cursor-pointer text-white py-2 rounded-xl mt-4 hover:bg-blue-700 transition shadow-md"
+            className={`w-full py-3 rounded-xl text-white font-semibold shadow-md transition ${
+              loading
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+            }`}
           >
             {loading ? "Logging in..." : "Login"}
           </motion.button>
         </form>
 
-        <p className="text-sm text-center text-gray-500 mt-6">
+        {/* Signup Redirect */}
+        <p className="text-center text-gray-600 text-sm mt-8">
           Don’t have an account?{" "}
-          <Link to="/signup" className="text-blue-600 hover:underline">
+          <Link
+            to="/signup"
+            className="text-blue-600 hover:underline font-medium"
+          >
             Get Started
           </Link>
         </p>

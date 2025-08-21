@@ -84,7 +84,7 @@ const Signup = () => {
         agreeTerms: false,
       });
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else {
         setError("An unexpected error occurred. Please try again.");
@@ -95,20 +95,24 @@ const Signup = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6 bg-center bg-cover"
+      className="min-h-screen flex items-center justify-center bg-center bg-cover p-4 mt-14"
       style={{
-        backgroundImage: `linear-gradient(to bottom right, rgba(255,255,255,0.9), rgba(240,240,255,0.95)), url(${Login})`,
+        backgroundImage: `linear-gradient(to bottom right, rgba(255, 255, 255, 0.8), rgba(240, 240, 255, 0.9)), url(${Login})`,
       }}
     >
       <motion.div
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-white bg-opacity-90 backdrop-blur-md shadow-2xl rounded-3xl p-10 max-w-xl w-full"
+        className="bg-white bg-opacity-80 backdrop-blur-md shadow-2xl rounded-3xl p-10 max-w-2xl w-full border border-white/40"
       >
-        <h2 className="text-3xl font-extrabold text-blue-700 text-center mb-8">
+        <h2 className="text-4xl font-extrabold text-blue-700 text-center mb-6">
           Create an Account
         </h2>
+        <p className="text-center text-gray-600 mb-10">
+          Join <span className="font-semibold text-blue-600">BooksArc</span> and
+          unlock a world of reading.
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Username */}
@@ -127,10 +131,10 @@ const Signup = () => {
               onChange={handleChange}
               placeholder="e.g. booklover23"
               required
-              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-xl bg-white/70 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Choose a unique username to identify your account.
+            <p className="mt-1 text-xs text-gray-500">
+              This will be your display name across BooksArc.
             </p>
           </div>
 
@@ -150,10 +154,10 @@ const Signup = () => {
               onChange={handleChange}
               placeholder="you@example.com"
               required
-              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-xl bg-white/70 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              We'll send important updates to this email.
+            <p className="mt-1 text-xs text-gray-500">
+              We’ll send verification and updates to this email.
             </p>
           </div>
 
@@ -173,10 +177,10 @@ const Signup = () => {
               onChange={handleChange}
               placeholder="••••••••"
               required
-              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-xl bg-white/70 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Use at least 8 characters with a mix of letters and numbers.
+            <p className="mt-1 text-xs text-gray-500">
+              Must be at least 8 characters with a mix of letters & numbers.
             </p>
           </div>
 
@@ -196,10 +200,10 @@ const Signup = () => {
               onChange={handleChange}
               placeholder="+254712345678"
               required
-              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-xl bg-white/70 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Provide a phone number for account recovery and notifications.
+            <p className="mt-1 text-xs text-gray-500">
+              Enter a valid number for delivery updates and account recovery.
             </p>
           </div>
 
@@ -219,10 +223,10 @@ const Signup = () => {
               onChange={handleChange}
               placeholder="Enter your ID number"
               required
-              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-xl bg-white/70 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              This information is required for identity verification.
+            <p className="mt-1 text-xs text-gray-500">
+              Used for identity verification to ensure secure borrowing.
             </p>
           </div>
 
@@ -240,7 +244,7 @@ const Signup = () => {
               value={formData.location}
               onChange={handleChange}
               required
-              className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-xl bg-white/70 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             >
               <option value="" disabled>
                 Select your location
@@ -251,12 +255,12 @@ const Signup = () => {
                 </option>
               ))}
             </select>
-            <p className="text-xs text-gray-500 mt-1">
-              Select your nearest location for better service delivery.
+            <p className="mt-1 text-xs text-gray-500">
+              Choose the nearest area for convenient book delivery.
             </p>
           </div>
 
-          {/* Terms and Conditions */}
+          {/* Terms */}
           <div className="flex items-start">
             <input
               id="agreeTerms"
@@ -280,27 +284,27 @@ const Signup = () => {
             </label>
           </div>
 
-          {/* Error Message */}
+          {/* Error */}
           {error && (
             <p className="text-center text-red-600 font-semibold text-sm">
               {error}
             </p>
           )}
 
-          {/* Success Message */}
+          {/* Success */}
           {message && (
             <p className="text-center text-green-600 font-semibold text-sm">
               {message}
             </p>
           )}
 
-          {/* Submit Button */}
+          {/* Button */}
           <motion.button
             type="submit"
             disabled={loading}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className={`w-full py-3 rounded-xl text-white font-semibold shadow-md transition ${
+            className={`w-full py-3 rounded-2xl text-white font-semibold shadow-lg backdrop-blur-md transition ${
               loading
                 ? "bg-blue-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
