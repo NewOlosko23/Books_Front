@@ -140,11 +140,11 @@ export default function Header({ brand = "BooksArc" }) {
               </>
             ) : (
               <Link
-                to="/signup"
+                to="/login"
                 className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
               >
                 <User className="h-4 w-4" />
-                <span className="hidden lg:inline">Get Started</span>
+                <span className="hidden lg:inline">Login</span>
               </Link>
             )}
           </div>

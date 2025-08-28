@@ -72,7 +72,7 @@ const Signup = () => {
 
       setMessage("Registration successful!");
       setLoading(false);
-      navigate("/dashboard");
+      navigate("/browse");
 
       setFormData({
         username: "",

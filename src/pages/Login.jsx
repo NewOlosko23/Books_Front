@@ -38,7 +38,7 @@ const Login = () => {
       const data = response.data;
 
       login({ data: data.user, token: data.token });
-      navigate("/dashboard");
+      navigate("/browse");
     } catch (err) {
       if (err.response?.data?.message) {
         setError(err.response.data.message);

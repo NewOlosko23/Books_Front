@@ -127,7 +127,7 @@ const BookDetail = () => {
         </Helmet>
       </>
       <>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 py-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 py-5">
           {/* Image Carousel */}
           <div className="relative w-full h-[420px] md:h-[500px] rounded-2xl overflow-hidden shadow-xl bg-black">
             <img
